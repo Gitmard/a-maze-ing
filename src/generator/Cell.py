@@ -1,3 +1,5 @@
+from .EDirection import EDirection
+
 from .Vec2 import Vec2
 
 
@@ -5,25 +7,29 @@ class Cell:
     position: Vec2
     locked: bool
     walls: int
-    is_forty_two: bool
 
     def __init__(
         self,
         position: Vec2,
-        locked: bool = False,
         walls: int = 0,
-        is_forty_two: bool = False
+        locked: bool = False
     ):
         self.position = position
-        self.locked = locked or is_forty_two
         self.walls = walls
-        self.is_forty_two = is_forty_two
+        self.locked = locked
+
+    def enclose(
+        self,
+        direction: EDirection
+    ) -> None:
+        self.walls |= direction
 
     def carve(
         self,
-        directions: int
+        direction: EDirection
     ) -> None:
-        self.walls |= directions
+        if self.walls & direction:
+            self.walls -= direction
 
     def reset_cell(self) -> None:
         self.walls = 0
