@@ -1,23 +1,20 @@
 from .Vec2 import Vec2
-
+from .EDirection import EDirection
 
 class Cell:
     position: Vec2
     locked: bool
     walls: int
-    is_forty_two: bool
 
     def __init__(
         self,
         position: Vec2,
-        locked: bool = False,
         walls: int = 0,
-        is_forty_two: bool = False
+        locked: bool = False
     ):
         self.position = position
-        self.locked = locked or is_forty_two
         self.walls = walls
-        self.is_forty_two = is_forty_two
+        self.locked = locked
 
     def carve(
         self,

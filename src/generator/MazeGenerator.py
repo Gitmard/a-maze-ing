@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from random import Random
 from .Cell import Cell
 from .Maze import Maze
 from typing import Union, List, Generator, Any
@@ -7,6 +8,16 @@ from typing import Union, List, Generator, Any
 class MazeGenerator(ABC):
     __solution: Union[List[Cell], None]
     __maze: Maze
+    __seed: Union[str, None]
+    __rng: Random
+
+    def __init__(
+        self,
+        seed: str
+    ) -> None:
+        self.__seed = seed
+        self.__rng = Random()
+        self.__rng.seed(seed)
 
     @abstractmethod
     def generate(self, tick_count: int = -1) -> Union[
@@ -35,5 +46,11 @@ class MazeGenerator(ABC):
     def get_solution(self) -> Union[List[Cell], None]:
         return self.__solution
 
-    def get_maze(self) -> Any:
+    def get_maze(self) -> Maze:
         return self.__maze
+
+    def _get_seed(self) -> Union[str, None]:
+        return self.__seed
+
+    def _get_rng(self) -> Random:
+        return self.__rng
