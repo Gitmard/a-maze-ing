@@ -277,11 +277,6 @@ class RecursiveDivisionGenerator(MazeGenerator):
             ) <= 2:
                 continue
 
-            # Slice 2 new frames
-            new_frames: List[
-                RecursiveDivisionGenerator.DivisionFrame
-            ] = self.__create_new_frames(current_frame)
-
             # Add the wall for the current frame
             if (
                 current_frame.position == RecursiveDivisionGenerator.Position.TOP
@@ -290,6 +285,11 @@ class RecursiveDivisionGenerator(MazeGenerator):
                 updated_cells.extend(
                     self.__add_wall(current_frame)
                 )
+
+            # Slice 2 new frames
+            new_frames: List[
+                RecursiveDivisionGenerator.DivisionFrame
+            ] = self.__create_new_frames(current_frame)
 
             # Add the new frames to the stack
             stack.extend(new_frames)
