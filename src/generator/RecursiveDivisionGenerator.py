@@ -169,8 +169,8 @@ class RecursiveDivisionGenerator(MazeGenerator):
             edited_cells.extend(curr_cells)
 
         # Carve the cells with the opening
-        self.get_maze()[opening_y][wall_x].carve(EDirection.EAST)
-        self.get_maze()[opening_y][wall_x + 1].carve(EDirection.WEST)
+        self.get_maze().map[opening_y][wall_x].carve(EDirection.EAST)
+        self.get_maze().map[opening_y][wall_x + 1].carve(EDirection.WEST)
         return edited_cells
 
     def __add_horizontal_wall(
@@ -213,8 +213,8 @@ class RecursiveDivisionGenerator(MazeGenerator):
             edited_cells.extend(curr_cells)
 
         # Carve the cells with the opening
-        self.get_maze()[wall_y][opening_x].carve(EDirection.SOUTH)
-        self.get_maze()[wall_y][opening_x + 1].carve(EDirection.NORTH)
+        self.get_maze().map[wall_y][opening_x].carve(EDirection.SOUTH)
+        self.get_maze().map[wall_y][opening_x + 1].carve(EDirection.NORTH)
         return edited_cells
 
     def __add_wall(
