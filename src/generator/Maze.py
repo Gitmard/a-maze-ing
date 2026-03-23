@@ -7,8 +7,8 @@ from typing import List
 class Maze:
 
     class Status(IntEnum):
-        BLANK = auto(),
-        INITIALIZED = auto(),
+        BLANK = auto()
+        INITIALIZED = auto()
         SOLVED = auto()
 
     map: List[List[Cell]]

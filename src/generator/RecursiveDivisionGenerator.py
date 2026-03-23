@@ -188,7 +188,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
         wall_y = current_frame.subregion_pos.y + current_frame.local_height - 1
 
         # Choose a random coordinate for the opening
-        # We bound the coordinate from the beggning to the width - 2
+        # We bound the coordinate from the beginning to the width - 2
         # For a slice of width 10, the opening will be between x=0 and x=8
         # Loop until we pick a non-locked cell
         # TODO: Use a set of available coordinates, removing from said set when we pick
