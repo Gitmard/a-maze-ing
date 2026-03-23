@@ -149,7 +149,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
         while (
             opening_y == -1
             or self.get_maze().map[opening_y][wall_x].locked
-            or self.get_maze().map[opening_y + 1][wall_x].locked
+            or self.get_maze().map[opening_y][wall_x + 1].locked
         ):
             opening_y = self._get_rng().randint(
                 current_frame.subregion_pos.y,
@@ -195,7 +195,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
         while (
             opening_x == -1
             or self.get_maze().map[wall_y][opening_x].locked
-            or self.get_maze().map[wall_y][opening_x + 1].locked
+            or self.get_maze().map[wall_y + 1][opening_x].locked
         ):
             opening_x = self._get_rng().randint(
                 current_frame.subregion_pos.x,
