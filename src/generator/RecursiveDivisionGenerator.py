@@ -42,12 +42,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
             (
                 position=RecursiveDivisionGenerator.Position.LEFT,
                 direction=RecursiveDivisionGenerator.Direction.VERTICAL,
-                local_width=(
-                    current_frame.local_width - slice_x - 1
-                    if (slice_x + 1) > current_frame.local_width // 2
-                    else
-                    slice_x + 1
-                ),
+                local_width=slice_x + 1,
                 local_height=current_frame.local_height,
                 subregion_pos=copy(current_frame.subregion_pos)
             ),
@@ -77,12 +72,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
                 position=RecursiveDivisionGenerator.Position.TOP,
                 direction=RecursiveDivisionGenerator.Direction.HORIZONTAL,
                 local_width=current_frame.local_width,
-                local_height=(
-                    current_frame.local_height - slice_y - 1
-                    if (slice_y + 1) > current_frame.local_height // 2
-                    else
-                    slice_y + 1
-                ),
+                local_height=slice_y + 1,
                 subregion_pos=copy(current_frame.subregion_pos)
             ),
             RecursiveDivisionGenerator.DivisionFrame
@@ -152,7 +142,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
         wall_x = current_frame.subregion_pos.x + current_frame.local_width - 1
 
         # Choose a random coordinate for the opening
-        # We bound the coordinate from the beggining to the height - 2
+        # We bound the coordinate from the beginning to the height - 2
         # For a slice of width 10, the opening will be between y=0 and y=8
         opening_y = self._get_rng().randint(
             current_frame.subregion_pos.y,
