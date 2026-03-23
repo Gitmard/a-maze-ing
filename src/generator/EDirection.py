@@ -1,8 +1,8 @@
-from enum import Enum
+from enum import IntEnum, auto
 
 
-class EDirection(Enum):
-    NORTH = 1
-    EAST = 2
-    SOUTH = 4
-    WEST = 8
+class EDirection(IntEnum):
+    NORTH = auto()
+    EAST = auto()
+    SOUTH = auto()
+    WEST = auto()

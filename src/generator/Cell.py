@@ -22,14 +22,14 @@ class Cell:
         self,
         direction: EDirection
     ) -> None:
-        self.walls |= direction
+        self.walls |= direction.value
 
     def carve(
         self,
         direction: EDirection
     ) -> None:
-        if self.walls & direction:
-            self.walls -= direction
+        if self.walls & direction.value:
+            self.walls -= direction.value
 
     def reset_cell(self) -> None:
         self.walls = 0
