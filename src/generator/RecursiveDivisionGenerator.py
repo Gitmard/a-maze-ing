@@ -238,13 +238,13 @@ class RecursiveDivisionGenerator(MazeGenerator):
 
     def generate(
         self,
-        tick_count: int = -1,
+        tick_count: int = 0,
         seed: Optional[str] = None
     ) -> Union[
         List[List[Cell]],
         Generator[List[Cell], None, None],
     ]:
-        # TODO: check the tick_count parameter and yield if it is defined
+        # TODO: check the tick_count parameter and yield if it is > 0
         if seed is not None:
             self._get_rng().seed(seed)
 
