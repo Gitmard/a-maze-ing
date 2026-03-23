@@ -11,12 +11,10 @@ from dataclasses import dataclass
 class RecursiveDivisionGenerator(MazeGenerator):
 
     class Direction(IntEnum):
-        NONE = auto()
         HORIZONTAL = auto()
         VERTICAL = auto()
 
     class Position(IntEnum):
-        NONE = auto()
         TOP = auto()
         BOTTOM = auto()
         LEFT = auto()
@@ -252,12 +250,13 @@ class RecursiveDivisionGenerator(MazeGenerator):
         stack: List[RecursiveDivisionGenerator.DivisionFrame] = [
             RecursiveDivisionGenerator.DivisionFrame(
                 position=(
-                    # Placeholder value, the full maze has no "position"
                     RecursiveDivisionGenerator.Position.TOP
                 ),
                 direction=(
-                    # Placeholder value, the full maze has no "direction"
-                    RecursiveDivisionGenerator.Direction.NONE
+                    RecursiveDivisionGenerator.Direction.HORIZONTAL
+                    if self.get_maze().height > self.get_maze().width
+                    else
+                    RecursiveDivisionGenerator.Direction.VERTICAL
                 ),
                 local_height=self.get_maze().height,
                 local_width=self.get_maze().width,
