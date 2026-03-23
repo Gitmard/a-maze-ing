@@ -124,7 +124,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
             current_frame,
             (
                 RecursiveDivisionGenerator.Direction.VERTICAL
-                if self._get_rng().randint(0, 1) >= 0.5
+                if self._get_rng().randint(0, 1) == 1
                 else
                 RecursiveDivisionGenerator.Direction.HORIZONTAL
             )
@@ -143,7 +143,8 @@ class RecursiveDivisionGenerator(MazeGenerator):
         # We bound the coordinate from the beginning to the height - 2
         # For a slice of width 10, the opening will be between y=0 and y=8
         # Pick a new coordinate if we chose a locked cell
-        # TODO: Use a set of available coordinates, removing from said set when we pick
+        # TODO: Use a set of available coordinates,
+        # removing from said set when we pick
         # This would avoid an infinite loop in there is no available cell
         opening_y = -1
         while (
@@ -153,7 +154,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
         ):
             opening_y = self._get_rng().randint(
                 current_frame.subregion_pos.y,
-                current_frame.subregion_pos.y + current_frame.local_height - 2
+                current_frame.subregion_pos.y + current_frame.local_height - 1
             )
 
         # Loop through the wall's height
@@ -189,7 +190,8 @@ class RecursiveDivisionGenerator(MazeGenerator):
         # We bound the coordinate from the beginning to the width - 2
         # For a slice of width 10, the opening will be between x=0 and x=8
         # Loop until we pick a non-locked cell
-        # TODO: Use a set of available coordinates, removing from said set when we pick
+        # TODO: Use a set of available coordinates,
+        # removing from said set when we pick
         # This would avoid an infinite loop in there is no available cell
         opening_x = -1
         while (
@@ -199,7 +201,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
         ):
             opening_x = self._get_rng().randint(
                 current_frame.subregion_pos.x,
-                current_frame.subregion_pos.x + current_frame.local_width - 2
+                current_frame.subregion_pos.x + current_frame.local_width - 1
             )
 
         # Loop through the wall's width
@@ -219,7 +221,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
 
         # Carve the cells with the opening
         self.get_maze().map[wall_y][opening_x].carve(EDirection.SOUTH)
-        self.get_maze().map[wall_y][opening_x + 1].carve(EDirection.NORTH)
+        self.get_maze().map[wall_y + 1][opening_x].carve(EDirection.NORTH)
         return edited_cells
 
     def __add_wall(
@@ -250,7 +252,9 @@ class RecursiveDivisionGenerator(MazeGenerator):
         stack: List[RecursiveDivisionGenerator.DivisionFrame] = [
             RecursiveDivisionGenerator.DivisionFrame(
                 position=(
-                    RecursiveDivisionGenerator.Position.TOP
+                    # We set the position to bottom
+                    # to avoid placing an out-of-bounds wall
+                    RecursiveDivisionGenerator.Position.BOTTOM
                 ),
                 direction=(
                     RecursiveDivisionGenerator.Direction.HORIZONTAL
@@ -270,17 +274,35 @@ class RecursiveDivisionGenerator(MazeGenerator):
             current_frame = stack.pop()
 
             # Stop condition, the frame will be skipped if too small
-            # TODO: keep slicing if one of the dimensions still allows it
-            if max(
-                current_frame.local_height,
-                current_frame.local_width
-            ) <= 2:
+            if (
+                max(
+                    current_frame.local_height,
+                    current_frame.local_width
+                ) <= 2
+            ):
                 continue
 
-            # Add the wall for the current frame
+            # Add the wall for the current frame, skipping the frames with
+            # a position set to BOTTOM or RIGHT to avoid duplicated walls and
+            # Frames with invalid dimensions
+            # (width >= 2 for HORIZONTAL walls, height >= 2 for VERTICAL)
             if (
-                current_frame.position == RecursiveDivisionGenerator.Position.TOP
-                or current_frame.position == RecursiveDivisionGenerator.Position.LEFT
+                (
+                    current_frame.position
+                    == RecursiveDivisionGenerator.Position.TOP
+                    or current_frame.position
+                    == RecursiveDivisionGenerator.Position.LEFT
+                ) and (
+                    (
+                        current_frame.direction
+                        == RecursiveDivisionGenerator.Direction.HORIZONTAL
+                        and current_frame.local_width >= 2
+                    ) or (
+                        current_frame.direction
+                        == RecursiveDivisionGenerator.Direction.VERTICAL
+                        and current_frame.local_height >= 2
+                    )
+                )
             ):
                 updated_cells.extend(
                     self.__add_wall(current_frame)
