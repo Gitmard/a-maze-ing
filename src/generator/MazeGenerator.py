@@ -13,7 +13,7 @@ class MazeGenerator(ABC):
 
     def __init__(
         self,
-        seed: str
+        seed: Optional[str] = None
     ) -> None:
         self.__seed = seed
         self.__rng = Random(seed)
