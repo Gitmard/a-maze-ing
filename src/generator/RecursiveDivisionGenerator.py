@@ -69,7 +69,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
         current_frame: DivisionFrame
     ) -> List[DivisionFrame]:
         slice_y = int(
-            self.__rng.randint(0, current_frame.local_height - 2)
+            self._get_rng().randint(0, current_frame.local_height - 2)
         )
         return [
             RecursiveDivisionGenerator.DivisionFrame
