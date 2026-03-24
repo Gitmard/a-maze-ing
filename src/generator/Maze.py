@@ -11,6 +11,7 @@ class Maze:
     class Status(IntEnum):
         BLANK = auto()
         INITIALIZED = auto()
+        GENERATED = auto()
         SOLVED = auto()
 
     map: List[List[Cell]]
