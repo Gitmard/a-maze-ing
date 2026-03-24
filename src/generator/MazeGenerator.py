@@ -4,7 +4,7 @@ from random import Random
 from generator.Vec2 import Vec2
 from .Cell import Cell
 from .Maze import Maze
-from typing import Optional, Union, List, Any
+from typing import Optional, Union, List
 
 
 class MazeGenerator(ABC):

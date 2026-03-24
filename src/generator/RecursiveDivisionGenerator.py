@@ -288,13 +288,22 @@ class RecursiveDivisionGenerator(MazeGenerator):
             ):
                 continue
 
+            # Slice the current frame in two
             new_frames = self.__create_new_frames(current_frame)
 
+            # Add a wall using the first frame
+            # For a vertical split, the index 0 will always be the top frame
+            # For horizontal, the left frame
+            # Since the frames share the same wall,
+            # we can call add_wall only once
+            # We only use the "first" frame here, so for a vertical split,
+            # The X coordinate of the wall will be the local width of the frame
+            # For horizontal, Y is the local height
             updated_cells.extend(
                 self.__add_wall(new_frames[0])
             )
 
-            # Slice 2 new frames and add them to the stack
+            # Add the new frames to the stack
             stack.extend(new_frames)
         self.get_maze().status = Maze.Status.GENERATED
         return updated_cells
