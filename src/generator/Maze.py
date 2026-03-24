@@ -18,6 +18,8 @@ class Maze:
     width: int
     height: int
     status: "Maze.Status"
+    start_pos: Vec2
+    end_pos: Vec2
 
     def __init__(self) -> None:
         self.map = []
@@ -31,10 +33,18 @@ class Maze:
             for cell in line:
                 cell.reset_cell()
 
-    def init_map(self, width: int, height: int) -> None:
+    def init_map(
+        self,
+        width: int,
+        height: int,
+        start_pos: Vec2,
+        end_pos: Vec2
+    ) -> None:
         self.status = Maze.Status.INITIALIZED
         self.width = width
         self.height = height
+        self.start_pos = start_pos
+        self.end_pos = end_pos
         self.map = [
             [Cell(position=Vec2(x, y)) for x in range(width)]
             for y in range(height)

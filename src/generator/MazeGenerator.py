@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from random import Random
+
+from generator.Vec2 import Vec2
 from .Cell import Cell
 from .Maze import Maze
 from typing import Optional, Union, List, Any
@@ -12,11 +14,15 @@ class MazeGenerator(ABC):
     __rng: Random
     __height: int
     __width: int
+    __start_pos: Vec2
+    __end_pos: Vec2
 
     def __init__(
         self,
         width: int,
         height: int,
+        start_pos: Vec2,
+        end_pos: Vec2,
         seed: Optional[str] = None
     ) -> None:
         self.__seed = seed
@@ -24,7 +30,9 @@ class MazeGenerator(ABC):
         self.__maze = Maze()
         self.__width = width
         self.__height = height
-        self.__maze.init_map(width, height)
+        self.__start_pos = start_pos
+        self.__end_pos = end_pos
+        self.__maze.init_map(width, height, start_pos, end_pos)
 
     @abstractmethod
     def generate(
@@ -35,7 +43,12 @@ class MazeGenerator(ABC):
 
     def reset_maze(self) -> None:
         self.__maze.reset_map()
-        self.__maze.init_map(self.__width, self.__height)
+        self.__maze.init_map(
+            self.__width,
+            self.__height,
+            self.__start_pos,
+            self.__end_pos
+        )
 
     def find_shortest_path(self) -> List[Cell]:
         # TODO: Implement A* algorithm
