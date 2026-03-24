@@ -7,7 +7,6 @@ from typing import List, Optional
 from enum import IntEnum, auto
 from copy import copy
 from dataclasses import dataclass
-from generator.AsciiMazeVisualizer import AsciiMazeVisualizer
 
 
 class RecursiveDivisionGenerator(MazeGenerator):
@@ -36,8 +35,8 @@ class RecursiveDivisionGenerator(MazeGenerator):
         self,
         lower: int,
         upper: int,
-        mu: int = 0.5,
-        sigma: int = 0.15
+        mu: float = 0.5,
+        sigma: float = 0.15
     ) -> int:
         r = max(0, min(1, self._get_rng().gauss(mu, sigma)))
         dist = upper - lower
@@ -102,25 +101,6 @@ class RecursiveDivisionGenerator(MazeGenerator):
         current_frame: DivisionFrame,
         direction: "RecursiveDivisionGenerator.Direction"
     ) -> List[DivisionFrame]:
-        # if (
-        #     current_frame.direction
-        #     == RecursiveDivisionGenerator.Direction.NONE
-        # ):
-        #     if current_frame.local_height > current_frame.local_width:
-        #         current_frame.direction = (
-        #             RecursiveDivisionGenerator.Direction.HORIZONTAL
-        #         )
-        #     elif current_frame.local_width > current_frame.local_height:
-        #         current_frame.direction = (
-        #             RecursiveDivisionGenerator.Direction.VERTICAL
-        #         )
-        #     else:
-        #         current_frame.direction = (
-        #             RecursiveDivisionGenerator.Direction.VERTICAL
-        #             if self._get_rng().randint(0, 1) == 1
-        #             else
-        #             RecursiveDivisionGenerator.Direction.HORIZONTAL
-        #         )
         if direction == RecursiveDivisionGenerator.Direction.VERTICAL:
             return self.__slice_random_vertical(current_frame)
         else:
@@ -269,13 +249,14 @@ class RecursiveDivisionGenerator(MazeGenerator):
     def generate(
         self,
         seed: Optional[str] = None
-    ) -> List[List[Cell]]:
-        # TODO: check the tick_count parameter and yield if it is > 0
+    ) -> List[Cell]:
+
         if seed is not None:
             self._get_rng().seed(seed)
+
         if self.get_maze().status == Maze.Status.GENERATED:
             self.reset_maze()
-        await_input = False
+
         # Initialize the stack with a frame of the full maze
         stack: List[
             RecursiveDivisionGenerator.DivisionFrame
@@ -309,33 +290,11 @@ class RecursiveDivisionGenerator(MazeGenerator):
 
             new_frames = self.__create_new_frames(current_frame)
 
-            # Add the wall for the current frame, skipping the frames with
-            # a position set to BOTTOM or RIGHT to avoid duplicated walls and
-            # Frames with invalid dimensions
-            # (width >= 2 for HORIZONTAL walls, height >= 2 for VERTICAL)
-            # if (
-            #     current_frame.position
-            #     == RecursiveDivisionGenerator.Position.TOP
-            #     or current_frame.position
-            #     == RecursiveDivisionGenerator.Position.LEFT
-            # ):
             updated_cells.extend(
                 self.__add_wall(new_frames[0])
             )
-            if await_input:
-                AsciiMazeVisualizer.display_maze(self.get_maze())
-                command = input("Press enter to continue, f to finish, q to quit... ")
-                if command == "q":
-                    return updated_cells
-                elif command == "f":
-                    await_input = False
 
             # Slice 2 new frames and add them to the stack
-            stack.extend(
-                new_frames
-                # self.__create_new_frames(current_frame)
-            )
+            stack.extend(new_frames)
         self.get_maze().status = Maze.Status.GENERATED
-        if not await_input:
-            AsciiMazeVisualizer.display_maze(self.get_maze())
         return updated_cells

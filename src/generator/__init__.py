@@ -1,6 +1,5 @@
 __all__ = [
     "MazeGenerator",
-    "AsciiMazeVisualizer",
     "EDirection",
     "Cell",
     "RecursiveDivisionGenerator",
@@ -9,7 +8,6 @@ __all__ = [
 ]
 
 from .MazeGenerator import MazeGenerator
-from .AsciiMazeVisualizer import AsciiMazeVisualizer
 from .EDirection import EDirection
 from .Cell import Cell
 from .RecursiveDivisionGenerator import RecursiveDivisionGenerator

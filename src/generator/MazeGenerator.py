@@ -30,7 +30,7 @@ class MazeGenerator(ABC):
     def generate(
         self,
         seed: Optional[str] = None
-    ) -> List[List[Any]]:
+    ) -> List[Cell]:
         pass
 
     def reset_maze(self) -> None:
