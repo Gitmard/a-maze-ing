@@ -1,8 +1,9 @@
-from .EDirection import EDirection
-from .MazeGenerator import MazeGenerator
-from .Cell import Cell
-from .Vec2 import Vec2
-from typing import Generator, List, Optional, Union
+from generator.Maze import Maze
+from generator.EDirection import EDirection
+from generator.MazeGenerator import MazeGenerator
+from generator.Cell import Cell
+from generator.Vec2 import Vec2
+from typing import List, Optional
 from enum import IntEnum, auto
 from copy import copy
 from dataclasses import dataclass
@@ -11,10 +12,12 @@ from dataclasses import dataclass
 class RecursiveDivisionGenerator(MazeGenerator):
 
     class Direction(IntEnum):
+        NONE = auto()
         HORIZONTAL = auto()
         VERTICAL = auto()
 
     class Position(IntEnum):
+        NONE = auto()
         TOP = auto()
         BOTTOM = auto()
         LEFT = auto()
@@ -28,13 +31,22 @@ class RecursiveDivisionGenerator(MazeGenerator):
         local_width: int
         subregion_pos: Vec2
 
+    def __gauss_randint(
+        self,
+        lower: int,
+        upper: int,
+        mu: float = 0.5,
+        sigma: float = 0.15
+    ) -> int:
+        r = max(0, min(1, self._get_rng().gauss(mu, sigma)))
+        dist = upper - lower
+        return int(lower + (dist * r))
+
     def __slice_random_vertical(
         self,
         current_frame: DivisionFrame
     ) -> List[DivisionFrame]:
-        slice_x = int(
-            self._get_rng().randint(0, current_frame.local_width - 2)
-        )
+        slice_x = self.__gauss_randint(0, current_frame.local_width - 2)
         return [
             RecursiveDivisionGenerator.DivisionFrame
             (
@@ -61,9 +73,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
         self,
         current_frame: DivisionFrame
     ) -> List[DivisionFrame]:
-        slice_y = int(
-            self._get_rng().randint(0, current_frame.local_height - 2)
-        )
+        slice_y = self.__gauss_randint(0, current_frame.local_height - 2)
         return [
             RecursiveDivisionGenerator.DivisionFrame
             (
@@ -152,7 +162,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
             or self.get_maze().map[opening_y][wall_x].locked
             or self.get_maze().map[opening_y][wall_x + 1].locked
         ):
-            opening_y = self._get_rng().randint(
+            opening_y = self.__gauss_randint(
                 current_frame.subregion_pos.y,
                 current_frame.subregion_pos.y + current_frame.local_height - 1
             )
@@ -199,11 +209,11 @@ class RecursiveDivisionGenerator(MazeGenerator):
             or self.get_maze().map[wall_y][opening_x].locked
             or self.get_maze().map[wall_y + 1][opening_x].locked
         ):
-            opening_x = self._get_rng().randint(
+            opening_x = self.__gauss_randint(
                 current_frame.subregion_pos.x,
-                current_frame.subregion_pos.x + current_frame.local_width - 1
+                current_frame.subregion_pos.x
+                + current_frame.local_width - 1
             )
-
         # Loop through the wall's width
         for x in range(
             current_frame.subregion_pos.x,
@@ -238,29 +248,25 @@ class RecursiveDivisionGenerator(MazeGenerator):
 
     def generate(
         self,
-        tick_count: int = 0,
         seed: Optional[str] = None
-    ) -> Union[
-        List[List[Cell]],
-        Generator[List[Cell], None, None],
-    ]:
-        # TODO: check the tick_count parameter and yield if it is > 0
+    ) -> List[Cell]:
+
         if seed is not None:
             self._get_rng().seed(seed)
 
+        if self.get_maze().status == Maze.Status.GENERATED:
+            self.reset_maze()
+
         # Initialize the stack with a frame of the full maze
-        stack: List[RecursiveDivisionGenerator.DivisionFrame] = [
+        stack: List[
+            RecursiveDivisionGenerator.DivisionFrame
+        ] = [
             RecursiveDivisionGenerator.DivisionFrame(
                 position=(
-                    # We set the position to bottom
-                    # to avoid placing an out-of-bounds wall
-                    RecursiveDivisionGenerator.Position.BOTTOM
+                    RecursiveDivisionGenerator.Position.NONE
                 ),
                 direction=(
-                    RecursiveDivisionGenerator.Direction.HORIZONTAL
-                    if self.get_maze().height > self.get_maze().width
-                    else
-                    RecursiveDivisionGenerator.Direction.VERTICAL
+                    RecursiveDivisionGenerator.Direction.NONE
                 ),
                 local_height=self.get_maze().height,
                 local_width=self.get_maze().width,
@@ -282,38 +288,13 @@ class RecursiveDivisionGenerator(MazeGenerator):
             ):
                 continue
 
-            # Add the wall for the current frame, skipping the frames with
-            # a position set to BOTTOM or RIGHT to avoid duplicated walls and
-            # Frames with invalid dimensions
-            # (width >= 2 for HORIZONTAL walls, height >= 2 for VERTICAL)
-            if (
-                (
-                    current_frame.position
-                    == RecursiveDivisionGenerator.Position.TOP
-                    or current_frame.position
-                    == RecursiveDivisionGenerator.Position.LEFT
-                ) and (
-                    (
-                        current_frame.direction
-                        == RecursiveDivisionGenerator.Direction.HORIZONTAL
-                        and current_frame.local_width > 1
-                    ) or (
-                        current_frame.direction
-                        == RecursiveDivisionGenerator.Direction.VERTICAL
-                        and current_frame.local_height > 1
-                    )
-                )
-            ):
-                updated_cells.extend(
-                    self.__add_wall(current_frame)
-                )
+            new_frames = self.__create_new_frames(current_frame)
 
-            # Slice 2 new frames
-            new_frames: List[
-                RecursiveDivisionGenerator.DivisionFrame
-            ] = self.__create_new_frames(current_frame)
+            updated_cells.extend(
+                self.__add_wall(new_frames[0])
+            )
 
-            # Add the new frames to the stack
+            # Slice 2 new frames and add them to the stack
             stack.extend(new_frames)
-
+        self.get_maze().status = Maze.Status.GENERATED
         return updated_cells
