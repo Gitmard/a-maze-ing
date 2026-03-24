@@ -278,7 +278,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
                 max(
                     current_frame.local_height,
                     current_frame.local_width
-                ) <= 2
+                ) <= 1
             ):
                 continue
 
@@ -296,11 +296,11 @@ class RecursiveDivisionGenerator(MazeGenerator):
                     (
                         current_frame.direction
                         == RecursiveDivisionGenerator.Direction.HORIZONTAL
-                        and current_frame.local_width >= 2
+                        and current_frame.local_width > 1
                     ) or (
                         current_frame.direction
                         == RecursiveDivisionGenerator.Direction.VERTICAL
-                        and current_frame.local_height >= 2
+                        and current_frame.local_height > 1
                     )
                 )
             ):

@@ -1,3 +1,5 @@
+from generator.EDirection import EDirection
+
 from .Cell import Cell
 from .Vec2 import Vec2
 from enum import IntEnum, auto
@@ -36,3 +38,9 @@ class Maze:
             [Cell(position=Vec2(x, y)) for x in range(width)]
             for y in range(height)
         ]
+        for x in range(width):
+            self.map[0][x].enclose(EDirection.NORTH)
+            self.map[height - 1][x].enclose(EDirection.SOUTH)
+        for y in range(height):
+            self.map[y][0].enclose(EDirection.WEST)
+            self.map[y][width - 1].enclose(EDirection.EAST)

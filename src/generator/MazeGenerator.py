@@ -13,10 +13,14 @@ class MazeGenerator(ABC):
 
     def __init__(
         self,
+        width: int,
+        height: int,
         seed: Optional[str] = None
     ) -> None:
         self.__seed = seed
         self.__rng = Random(seed)
+        self.__maze = Maze()
+        self.__maze.init_map(width, height)
 
     @abstractmethod
     def generate(
