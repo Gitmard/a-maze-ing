@@ -8,7 +8,7 @@ import sys
 def main() -> None:
     try:
         infos: Parsed = parse(
-            "/home/vquetier/cc/m2/amazeing/feur/src/config.txt"
+            "config.txt"
         )
 
     except ValidationError as e:
