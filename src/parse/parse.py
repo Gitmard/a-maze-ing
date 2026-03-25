@@ -217,11 +217,3 @@ def parse(filename: str) -> Parsed:
     }
 
     return Parsed(**typed)
-
-
-if __name__ == "__main__":
-    print(
-        parse(
-            "/home/vquetier/cc/m2/amazeing/example.txt"
-        )
-    )

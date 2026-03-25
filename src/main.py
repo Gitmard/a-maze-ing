@@ -5,11 +5,9 @@ from pydantic import ValidationError
 import sys
 
 
-def main() -> None:
+def main(filename: str) -> None:
     try:
-        infos: Parsed = parse(
-            "config.txt"
-        )
+        infos: Parsed = parse(filename)
 
     except ValidationError as e:
         print(e.errors()[0]["msg"])
@@ -18,6 +16,9 @@ def main() -> None:
     except ParseError as e:
         print(e)
         sys.exit(1)
+
+    except OSError as e:
+        print(e)
 
     generator = RecursiveDivisionGenerator(
         infos.width,
@@ -32,7 +33,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     try:
-        main()
+        main(sys.argv[1])
 
     except Exception as e:
         print(f"an unexpected exception occured ({e})")
