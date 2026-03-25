@@ -4,7 +4,9 @@ Reads a simple ``KEY=VALUE`` text file and validates the result
 into a :class:`Parsed` model using Pydantic.
 """
 
-from typing import Callable, Dict, Set, Tuple
+from typing import Callable, Dict, Set, Tuple, cast
+
+from typing_extensions import TypedDict
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -82,6 +84,18 @@ class Parsed(BaseModel):
             )
 
         return self
+
+
+class ParsedDict(TypedDict):
+    """Intermediate typed dict matching :class:`Parsed` fields."""
+
+    width: int
+    height: int
+    entry: Tuple[int, int]
+    exit: Tuple[int, int]
+    output_file: str
+    perfect: bool
+    seed: str
 
 
 def parse_tuple(arg: str) -> Tuple[int, int]:
@@ -192,4 +206,22 @@ def parse(filename: str) -> Parsed:
 
             values[key.lower()] = FUNCTION_FOR_KEY[key](value)
 
-    return Parsed(**values)
+    typed: ParsedDict = {
+        "width": cast(int, values["width"]),
+        "height": cast(int, values["height"]),
+        "entry": cast(Tuple[int, int], values["entry"]),
+        "exit": cast(Tuple[int, int], values["exit"]),
+        "output_file": cast(str, values["output_file"]),
+        "perfect": cast(bool, values["perfect"]),
+        "seed": cast(str, values["seed"]),
+    }
+
+    return Parsed(**typed)
+
+
+if __name__ == "__main__":
+    print(
+        parse(
+            "/home/vquetier/cc/m2/amazeing/example.txt"
+        )
+    )
