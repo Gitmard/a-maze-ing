@@ -9,7 +9,7 @@ import random
 from enum import Enum
 from typing import Any, Dict, List, Tuple, Union
 
-import mlx
+from mlx import Mlx
 from pynput import keyboard
 from pynput.keyboard import Key, KeyCode
 
@@ -73,7 +73,7 @@ class Visualizer:
         self.maze_width: int = len(self.maze[0])
         self.maze_height: int = len(self.maze)
 
-        self.m: Any = mlx.Mlx()
+        self.m: Any = Mlx()
         self.mlx_ptr: Any = self.m.mlx_init()
 
         _, screen_width, screen_height = (
