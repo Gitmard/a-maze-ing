@@ -81,6 +81,7 @@ class Maze:
             start_pos: Maze entry coordinates.
             end_pos: Maze exit coordinates.
         """
+        print("init ta mere la chauve")
         self.status = Maze.Status.INITIALIZED
         self.width = width
         self.height = height

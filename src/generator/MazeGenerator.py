@@ -1,7 +1,13 @@
+<<<<<<< HEAD
 from generator.GeneratorException import GeneratorException
 from generator.Vec2 import Vec2
 from generator.Cell import Cell
 from generator.Maze import Coord, Maze
+=======
+from generator.Vec2 import Vec2
+from generator.Cell import Cell
+from generator.Maze import Maze
+>>>>>>> f325f74 (feat:ft_cells)
 from typing import Optional, Union, List
 from abc import ABC, abstractmethod
 from random import Random
