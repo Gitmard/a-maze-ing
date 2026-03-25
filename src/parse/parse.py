@@ -47,41 +47,25 @@ class Parsed(BaseModel):
     def validate_coords(self) -> "Parsed":
         """Check that entry/exit are in-bounds and distinct."""
         if any(coord < 0 for coord in self.entry):
-            raise ValueError(
-                "Coordinates for entry should be positive"
-            )
+            raise ValueError("Coordinates for entry should be positive")
         if any(coord < 0 for coord in self.exit):
+            raise ValueError("Coordinates for exit should be positive")
+
+        if self.entry[0] >= self.width or self.entry[1] >= self.height:
             raise ValueError(
-                "Coordinates for exit should be positive"
+                "Coordinates for entry should be in the " "maze range"
             )
 
-        if (
-            self.entry[0] >= self.width
-            or self.entry[1] >= self.height
-        ):
+        if self.exit[0] >= self.width or self.exit[1] >= self.height:
             raise ValueError(
-                "Coordinates for entry should be in the "
-                "maze range"
-            )
-
-        if (
-            self.exit[0] >= self.width
-            or self.exit[1] >= self.height
-        ):
-            raise ValueError(
-                "Coordinates for exit should be in the "
-                "maze range"
+                "Coordinates for exit should be in the " "maze range"
             )
 
         if self.entry == self.exit:
-            raise ValueError(
-                "Entry and exit should be different"
-            )
+            raise ValueError("Entry and exit should be different")
 
         if self.width * self.height < 4 and self.perfect:
-            raise ValueError(
-                "Maze cannot be perfect with less than 4 cells"
-            )
+            raise ValueError("Maze cannot be perfect with less than 4 cells")
 
         return self
 
@@ -112,9 +96,7 @@ def parse_tuple(arg: str) -> Tuple[int, int]:
     """
     parts = arg.split(",")
     if len(parts) != 2:
-        raise ParseError(
-            f"Expected 'x,y' coordinate pair, got '{arg}'"
-        )
+        raise ParseError(f"Expected 'x,y' coordinate pair, got '{arg}'")
     return (int(parts[0]), int(parts[1]))
 
 
@@ -138,8 +120,7 @@ def parse_bool(arg: str) -> bool:
             return False
         case _:
             raise ParseError(
-                "PERFECT argument should be True or "
-                f"False, not {arg}"
+                "PERFECT argument should be True or " f"False, not {arg}"
             )
 
 
@@ -195,9 +176,7 @@ def parse(filename: str) -> Parsed:
                 continue
 
             if "=" not in line:
-                raise ParseError(
-                    f"Malformed line (missing '='): {line}"
-                )
+                raise ParseError(f"Malformed line (missing '='): {line}")
 
             key, value = line.split("=", maxsplit=1)
 

@@ -1,6 +1,6 @@
-from .EDirection import EDirection
-
-from .Vec2 import Vec2
+from generator.GeneratorException import GeneratorException
+from generator.EDirection import EDirection
+from generator.Vec2 import Vec2
 
 
 class Cell:
@@ -12,22 +12,20 @@ class Cell:
         self,
         position: Vec2,
         walls: int = 0,
-        locked: bool = False
+        locked: bool = False,
     ):
         self.position = position
         self.walls = walls
         self.locked = locked
 
-    def enclose(
-        self,
-        direction: EDirection
-    ) -> None:
+    def enclose(self, direction: EDirection) -> None:
+        if self.locked:
+            raise GeneratorException("Cannot edit a locked cell")
         self.walls |= direction.value
 
-    def carve(
-        self,
-        direction: EDirection
-    ) -> None:
+    def carve(self, direction: EDirection) -> None:
+        if self.locked:
+            raise GeneratorException("Cannot edit a locked cell")
         if self.walls & direction.value:
             self.walls -= direction.value
 

@@ -1,8 +1,9 @@
-from enum import IntEnum
+from enum import IntFlag
 
 
-class EDirection(IntEnum):
-    NORTH = 1
-    EAST = 2
-    SOUTH = 4
-    WEST = 8
+class EDirection(IntFlag):
+    NORTH = 1 << 0
+    EAST = 1 << 1
+    SOUTH = 1 << 2
+    WEST = 1 << 3
+    ALL = 15

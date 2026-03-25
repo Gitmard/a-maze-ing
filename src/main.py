@@ -1,4 +1,7 @@
+#!/usr/bin/env python3
+
 from generator import RecursiveDivisionGenerator, Vec2
+from generator.AsciiMazeVisualizer import AsciiMazeVisualizer
 from parse import parse, Parsed, ParseError
 from visualizer import visualize
 from pydantic import ValidationError
@@ -25,9 +28,11 @@ def main(filename: str) -> None:
         infos.height,
         Vec2(infos.entry[0], infos.entry[1]),
         Vec2(infos.exit[0], infos.exit[1]),
-        seed=infos.seed
+        seed=infos.seed,
+        add_ft_pattern=True,
     )
-
+    # generator.generate(show_progress=False)
+    # AsciiMazeVisualizer.display_maze(generator.get_maze())
     visualize(generator)
 
 
@@ -37,4 +42,5 @@ if __name__ == "__main__":
 
     except Exception as e:
         print(f"an unexpected exception occured ({e})")
-        sys.exit(1)
+        # sys.exit(1)
+        raise e
