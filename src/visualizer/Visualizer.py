@@ -17,7 +17,6 @@ from generator import MazeGenerator
 from generator.Cell import Cell
 from generator.EDirection import EDirection
 
-
 WALL_WIDTH_RATIO: float = 0.1
 
 
@@ -77,8 +76,8 @@ class Visualizer:
         self.m: Any = Mlx()
         self.mlx_ptr: Any = self.m.mlx_init()
 
-        _, screen_width, screen_height = (
-            self.m.mlx_get_screen_size(self.mlx_ptr)
+        _, screen_width, screen_height = self.m.mlx_get_screen_size(
+            self.mlx_ptr
         )
 
         screen_width = int(screen_width / 1.5)
@@ -88,9 +87,7 @@ class Visualizer:
 
         if screen_ratio >= maze_ratio:
             self.window_height: int = screen_height
-            self.window_width: int = int(
-                screen_height * maze_ratio
-            )
+            self.window_width: int = int(screen_height * maze_ratio)
         else:
             self.window_width = screen_width
             self.window_height = int(screen_width / maze_ratio)
@@ -103,14 +100,10 @@ class Visualizer:
             ),
         )
 
-        self.wall_width: int = max(
-            1, int(self.cell_size * WALL_WIDTH_RATIO)
-        )
+        self.wall_width: int = max(1, int(self.cell_size * WALL_WIDTH_RATIO))
         self.wall_height: int = self.cell_size + self.wall_width
 
-        self.window_width = (
-            self.cell_size * self.maze_width + self.wall_width
-        )
+        self.window_width = self.cell_size * self.maze_width + self.wall_width
         self.window_height = (
             self.cell_size * self.maze_height + self.wall_width
         )
@@ -121,12 +114,11 @@ class Visualizer:
             self.window_height,
             "A-Maze-Ing",
         )
-
         self.isolated_cells: List[Cell] = [
             cell
             for row in self.maze
             for cell in row
-            if cell.locked is True
+            if cell.walls == EDirection.ALL
         ]
 
         self.img: Any = self.m.mlx_new_image(
@@ -184,15 +176,13 @@ class Visualizer:
             if start_x >= end_x:
                 continue
 
-            buf_offset: int = (
-                py * self.line_len + start_x * bpp_bytes
-            )
+            buf_offset: int = py * self.line_len + start_x * bpp_bytes
             clipped_len: int = (end_x - start_x) * bpp_bytes
             clipped_start: int = (start_x - x) * bpp_bytes
 
-            self.data[buf_offset:buf_offset + clipped_len] = (
-                row[clipped_start:clipped_start + clipped_len]
-            )
+            self.data[buf_offset: buf_offset + clipped_len] = row[
+                clipped_start: clipped_start + clipped_len
+            ]
 
     def draw_isolated(self, color: Color) -> None:
         """Draw all locked (isolated) cells with the given colour.
@@ -322,9 +312,7 @@ class Visualizer:
                     if not (cell.walls & direction.value):
                         continue
 
-                    coord_tf, orientation = (
-                        transformations[direction]
-                    )
+                    coord_tf, orientation = transformations[direction]
                     tx, ty = coord_tf
                     wx: int = cx + tx
                     wy: int = cy + ty
@@ -356,9 +344,7 @@ class Visualizer:
 
     def draw_maze(self) -> None:
         """Composite all maze layers and flush to the window."""
-        self.m.mlx_sync(
-            self.mlx_ptr, self.m.SYNC_IMAGE_WRITABLE, self.img
-        )
+        self.m.mlx_sync(self.mlx_ptr, self.m.SYNC_IMAGE_WRITABLE, self.img)
 
         if self.need_to_draw_path:
             self.draw_path()
@@ -372,33 +358,34 @@ class Visualizer:
         self.m.mlx_put_image_to_window(
             self.mlx_ptr, self.win_ptr, self.img, 0, 0
         )
-        self.m.mlx_sync(
-            self.mlx_ptr, self.m.SYNC_WIN_FLUSH, self.win_ptr
-        )
+        self.m.mlx_sync(self.mlx_ptr, self.m.SYNC_WIN_FLUSH, self.win_ptr)
 
-    def run_visualizer(
-        self, state: Dict[EEvents, bool]
-    ) -> None:
+    def run_visualizer(self, state: Dict[EEvents, bool]) -> None:
         """Enter the MLX event loop, reacting to *state* flags.
 
         Args:
             state: Mutable dictionary whose boolean flags are set
                 by the keyboard listener and consumed each frame.
         """
+
         def on_loop(_: Any) -> None:
             if state[EEvents.REGEN]:
                 self.draw_empty()
                 self.generator.generate()
                 self.maze = self.generator.get_maze().map
+                self.isolated_cells = [
+                    cell
+                    for row in self.maze
+                    for cell in row
+                    if cell.walls == EDirection.ALL
+                ]
                 self.generator.get_maze().solve()
                 self.path = self.generator.get_maze().solution
                 self.draw_maze()
                 state[EEvents.REGEN] = False
 
             if state[EEvents.PATH_TOGGLE]:
-                self.need_to_draw_path = (
-                    not self.need_to_draw_path
-                )
+                self.need_to_draw_path = not self.need_to_draw_path
                 self.draw_maze()
                 state[EEvents.PATH_TOGGLE] = False
 
@@ -436,6 +423,7 @@ def visualize(generator: MazeGenerator) -> None:
         * **c** - randomise wall colour
         * **p** - toggle solution path
         * **r** - regenerate maze
+        * **q** - quit
 
     Args:
         generator: The maze generator to visualise.
@@ -444,7 +432,7 @@ def visualize(generator: MazeGenerator) -> None:
         EEvents.COLOR_CHANGE: False,
         EEvents.PATH_TOGGLE: False,
         EEvents.REGEN: True,
-        EEvents.QUIT: False
+        EEvents.QUIT: False,
     }
 
     def on_press(
@@ -462,7 +450,7 @@ def visualize(generator: MazeGenerator) -> None:
                 state[EEvents.PATH_TOGGLE] = True
             case "r":
                 state[EEvents.REGEN] = True
-            case 'q':
+            case "q":
                 state[EEvents.QUIT] = True
 
     visualizer = Visualizer(generator)
