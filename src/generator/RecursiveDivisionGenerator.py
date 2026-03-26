@@ -96,6 +96,50 @@ class RecursiveDivisionGenerator(MazeGenerator):
             )
         ]
 
+    def _carve_around(self, cell: Cell) -> None:
+        directions = [
+            EDirection.NORTH,
+            EDirection.EAST,
+            EDirection.SOUTH,
+            EDirection.WEST
+        ]
+
+        direction_neighbor = {
+            EDirection.NORTH: (0, -1),
+            EDirection.EAST: (1, 0),
+            EDirection.SOUTH: (0, 1),
+            EDirection.WEST: (-1, 0),
+        }
+
+        opposite_direction = {
+            EDirection.NORTH: EDirection.SOUTH,
+            EDirection.EAST: EDirection.WEST,
+            EDirection.SOUTH: EDirection.NORTH,
+            EDirection.WEST: EDirection.EAST
+        }
+
+        for dir in directions:
+            is_open = not bool(cell.walls & dir.value)
+            x, y = cell.position.x, cell.position.y
+            move_x, move_y = direction_neighbor[dir]
+            n_x, n_y = x + move_x, y + move_y
+
+            if n_x not in range(self.get_maze().width):
+                continue
+            if n_y not in range(self.get_maze().height):
+                continue
+            if self.get_maze().map[n_y][n_x].locked:
+                continue
+
+            n_cell = self.get_maze().map[n_y][n_x]
+
+            opposite = opposite_direction[dir]
+
+            if is_open:
+                n_cell.walls &= ~opposite.value
+            else:
+                n_cell.walls |= opposite.value
+
     def __slice_random(
         self,
         current_frame: DivisionFrame,
@@ -246,6 +290,62 @@ class RecursiveDivisionGenerator(MazeGenerator):
         else:
             return self.__add_horizontal_wall(current_frame)
 
+    def _make_imperfect(self) -> None:
+        directions = [
+            EDirection.NORTH,
+            EDirection.EAST,
+            EDirection.SOUTH,
+            EDirection.WEST
+        ]
+
+        direction_neighbor = {
+            EDirection.NORTH: (0, -1),
+            EDirection.EAST: (1, 0),
+            EDirection.SOUTH: (0, 1),
+            EDirection.WEST: (-1, 0),
+        }
+
+        opposite_direction = {
+            EDirection.NORTH: EDirection.SOUTH,
+            EDirection.EAST: EDirection.WEST,
+            EDirection.SOUTH: EDirection.NORTH,
+            EDirection.WEST: EDirection.EAST
+        }
+
+        cells_to_break = 0.4 * self.get_maze().height * self.get_maze().width
+        cells_to_break = max(1, cells_to_break)
+        break_count = 0
+        while break_count < cells_to_break:
+            row = self._get_rng().choice(self.get_maze().map)
+            cell = self._get_rng().choice(row)
+            if cell.walls in {1, 2, 4, 8}:
+                continue
+            if cell.locked:
+                continue
+            x, y = cell.position.x, cell.position.y
+            self._get_rng().shuffle(directions)
+            for dir in directions:
+                if not (cell.walls & dir.value):
+                    continue
+                move_x, move_y = direction_neighbor[dir]
+                n_x, n_y = x + move_x, y + move_y
+
+                if n_x not in range(self.get_maze().width):
+                    continue
+                if n_y not in range(self.get_maze().height):
+                    continue
+                if self.get_maze().map[n_y][n_x].locked:
+                    continue
+                opposite_dir = opposite_direction[dir]
+                if (self.get_maze().map[n_y][n_x].walls &
+                        ~opposite_dir.value) == 0:
+                    continue
+
+                cell.walls &= ~dir.value
+                self._carve_around(cell)
+                break_count += 1
+                break
+
     def generate(
         self,
         seed: Optional[str] = None
@@ -306,4 +406,5 @@ class RecursiveDivisionGenerator(MazeGenerator):
             # Add the new frames to the stack
             stack.extend(new_frames)
         self.get_maze().status = Maze.Status.GENERATED
+        self._make_imperfect()
         return updated_cells

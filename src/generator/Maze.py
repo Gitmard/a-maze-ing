@@ -100,7 +100,7 @@ class Maze:
 
         pq: SortedKeyList[Tuple[int, int, Coord]] = SortedKeyList(
             [(0, 0, start)],
-            key=lambda item: item[0],
+            key=lambda item: -item[0],
         )
 
         prev: Dict[Coord, Coord] = {}
