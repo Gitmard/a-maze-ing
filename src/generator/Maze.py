@@ -114,8 +114,8 @@ class Maze:
 
         if (
             add_ft_pattern
-            and height > ft_pattern_height
-            and width >= ft_pattern_width
+            and height >= ft_pattern_height + 2
+            and width >= ft_pattern_width + 2
         ):
 
             print("tabarnak de ft pattern ta mere la chauve")

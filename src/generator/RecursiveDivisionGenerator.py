@@ -5,7 +5,8 @@ from generator.EDirection import EDirection
 from generator.MazeGenerator import MazeGenerator
 from generator.Cell import Cell
 from generator.Vec2 import Vec2
-from typing import List, Optional
+from typing import List, Optional, Tuple
+from sortedcontainers import SortedKeyList
 from enum import IntEnum, auto
 from copy import copy
 from dataclasses import dataclass
@@ -307,6 +308,108 @@ class RecursiveDivisionGenerator(MazeGenerator):
         else:
             return self.__add_horizontal_wall(current_frame)
 
+    def _would_create_open_3x3(
+        self,
+        cell_x: int,
+        cell_y: int,
+        direction: EDirection,
+    ) -> bool:
+        """Check if removing a wall would complete a 3x3 open zone.
+
+        Args:
+            cell_x: X coordinate of the cell losing a wall.
+            cell_y: Y coordinate of that cell.
+            direction: The wall being removed.
+
+        Returns:
+            ``True`` if the removal would complete a fully open
+            3x3 block, ``False`` if it is safe.
+        """
+        maze = self.get_maze()
+        grid = maze.map
+
+        if direction == EDirection.EAST:
+            edge_cols = (cell_x, cell_x + 1)
+            edge_row = cell_y
+            is_vertical = True
+        elif direction == EDirection.WEST:
+            edge_cols = (cell_x - 1, cell_x)
+            edge_row = cell_y
+            is_vertical = True
+        elif direction == EDirection.SOUTH:
+            edge_rows = (cell_y, cell_y + 1)
+            edge_col = cell_x
+            is_vertical = False
+        else:  # NORTH
+            edge_rows = (cell_y - 1, cell_y)
+            edge_col = cell_x
+            is_vertical = False
+
+        candidates: List[Tuple[int, int]] = []
+        if is_vertical:
+            for cx in range(edge_cols[0] - 1, edge_cols[0] + 1):
+                for cy in range(edge_row - 2, edge_row + 1):
+                    candidates.append((cx, cy))
+        else:
+            for cy in range(edge_rows[0] - 1, edge_rows[0] + 1):
+                for cx in range(edge_col - 2, edge_col + 1):
+                    candidates.append((cx, cy))
+
+        for cx, cy in candidates:
+            if (
+                cx < 0 or cx + 2 >= maze.width
+                or cy < 0 or cy + 2 >= maze.height
+            ):
+                continue
+
+            all_open = True
+
+            for r in range(cy, cy + 3):
+                for c in range(cx, cx + 2):
+                    is_target = (
+                        c == cell_x
+                        and r == cell_y
+                        and direction == EDirection.EAST
+                    ) or (
+                        c + 1 == cell_x
+                        and r == cell_y
+                        and direction == EDirection.WEST
+                    )
+                    if not is_target and (
+                        grid[r][c].walls & EDirection.EAST.value
+                    ):
+                        all_open = False
+                        break
+                if not all_open:
+                    break
+
+            if not all_open:
+                continue
+
+            for r in range(cy, cy + 2):
+                for c in range(cx, cx + 3):
+                    is_target = (
+                        c == cell_x
+                        and r == cell_y
+                        and direction == EDirection.SOUTH
+                    ) or (
+                        c == cell_x
+                        and r + 1 == cell_y
+                        and direction == EDirection.NORTH
+                    )
+                    if not is_target and (
+                        grid[r][c].walls & EDirection.SOUTH.value
+                    ):
+                        all_open = False
+                        break
+                if not all_open:
+                    break
+
+            if all_open:
+                return True
+
+        return False
+
     def _make_imperfect(self) -> None:
         directions = [
             EDirection.NORTH,
@@ -322,46 +425,79 @@ class RecursiveDivisionGenerator(MazeGenerator):
             EDirection.WEST: (-1, 0),
         }
 
-        opposite_direction = {
-            EDirection.NORTH: EDirection.SOUTH,
-            EDirection.EAST: EDirection.WEST,
-            EDirection.SOUTH: EDirection.NORTH,
-            EDirection.WEST: EDirection.EAST
-        }
+        maze = self.get_maze()
 
-        cells_to_break = 0.4 * self.get_maze().height * self.get_maze().width
-        cells_to_break = max(1, cells_to_break)
+        def count_walls(cell: Cell):
+            c = 0
+            for dir in directions:
+                if cell.walls & dir.value:
+                    c += 1
+            return c
+
+        temp_available_cells: List[Cell] = [
+            cell
+            for row in maze.map
+            for cell in row
+            if not cell.locked
+        ]
+
+        self._get_rng().shuffle(temp_available_cells)
+
+        available_cells: SortedKeyList[Cell] = SortedKeyList(
+            temp_available_cells,
+            key=lambda x: count_walls(x)
+        )
+
+        wall_number = sum([
+            1 for cell in available_cells
+            for dir in directions
+            if cell.walls & dir.value
+        ])
+
+        wall_number -= (maze.height + maze.width) * 2
+
+        wall_number //= 2
+
+        walls_to_break = int(wall_number * 0.3)
+        walls_to_break = max(1, walls_to_break)
+
+        print(walls_to_break)
+
         break_count = 0
-        while break_count < cells_to_break:
-            row = self._get_rng().choice(self.get_maze().map)
-            cell = self._get_rng().choice(row)
-            if cell.walls in {1, 2, 4, 8}:
-                continue
-            if cell.locked:
-                continue
+        while break_count < walls_to_break and available_cells:
+            cell = available_cells.pop()
             x, y = cell.position.x, cell.position.y
             self._get_rng().shuffle(directions)
+
             for dir in directions:
+                breaked = False
+
                 if not (cell.walls & dir.value):
                     continue
+
                 move_x, move_y = direction_neighbor[dir]
                 n_x, n_y = x + move_x, y + move_y
 
-                if n_x not in range(self.get_maze().width):
+                if n_x not in range(maze.width):
                     continue
-                if n_y not in range(self.get_maze().height):
+                if n_y not in range(maze.height):
                     continue
-                if self.get_maze().map[n_y][n_x].locked:
+                if maze.map[n_y][n_x].locked:
                     continue
-                opposite_dir = opposite_direction[dir]
-                if (self.get_maze().map[n_y][n_x].walls &
-                        ~opposite_dir.value) == 0:
+
+                if self._would_create_open_3x3(x, y, dir):
                     continue
 
                 cell.walls &= ~dir.value
                 self._carve_around(cell)
                 break_count += 1
+                breaked = True
                 break
+
+            if breaked:
+                available_cells.add(cell)
+
+        print(break_count)
 
     def generate(
         self, seed: Optional[str] = None, show_progress: bool = False
