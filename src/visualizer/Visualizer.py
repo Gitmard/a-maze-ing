@@ -44,6 +44,7 @@ class EEvents(Enum):
     COLOR_CHANGE = "color_change"
     REGEN = "regen"
     PATH_TOGGLE = "path_toggle"
+    QUIT = "quit"
 
 
 Color = Tuple[int, int, int, int]
@@ -411,6 +412,9 @@ class Visualizer:
                 self.draw_maze()
                 state[EEvents.COLOR_CHANGE] = False
 
+            if state[EEvents.QUIT]:
+                self.m.mlx_loop_exit(self.mlx_ptr)
+
         def on_close(_: Any) -> None:
             self.m.mlx_loop_exit(self.mlx_ptr)
 
@@ -440,6 +444,7 @@ def visualize(generator: MazeGenerator) -> None:
         EEvents.COLOR_CHANGE: False,
         EEvents.PATH_TOGGLE: False,
         EEvents.REGEN: True,
+        EEvents.QUIT: False
     }
 
     def on_press(
@@ -457,6 +462,8 @@ def visualize(generator: MazeGenerator) -> None:
                 state[EEvents.PATH_TOGGLE] = True
             case "r":
                 state[EEvents.REGEN] = True
+            case 'q':
+                state[EEvents.QUIT] = True
 
     visualizer = Visualizer(generator)
 
