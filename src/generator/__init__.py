@@ -4,7 +4,7 @@ __all__ = [
     "Cell",
     "RecursiveDivisionGenerator",
     "Maze",
-    "Vec2"
+    "Vec2",
 ]
 
 from .MazeGenerator import MazeGenerator

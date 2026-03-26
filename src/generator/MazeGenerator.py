@@ -1,13 +1,13 @@
+from generator.Vec2 import Vec2
+from generator.Cell import Cell
+from generator.Maze import Maze
+from typing import Optional, Union, List
 from abc import ABC, abstractmethod
 from random import Random
 
-from generator.Vec2 import Vec2
-from .Cell import Cell
-from .Maze import Maze
-from typing import Optional, Union, List
-
 
 class MazeGenerator(ABC):
+
     __solution: Union[List[Cell], None]
     __maze: Maze
     __seed: Union[str, None]
@@ -16,6 +16,7 @@ class MazeGenerator(ABC):
     __width: int
     __start_pos: Vec2
     __end_pos: Vec2
+    __add_ft_pattern: True
 
     def __init__(
         self,
@@ -23,7 +24,8 @@ class MazeGenerator(ABC):
         height: int,
         start_pos: Vec2,
         end_pos: Vec2,
-        seed: Optional[str] = None
+        seed: Optional[str] = None,
+        add_ft_pattern: bool = False,
     ) -> None:
         self.__seed = seed
         self.__rng = Random(seed)
@@ -32,13 +34,11 @@ class MazeGenerator(ABC):
         self.__height = height
         self.__start_pos = start_pos
         self.__end_pos = end_pos
-        self.__maze.init_map(width, height, start_pos, end_pos)
+        self.__add_ft_pattern = add_ft_pattern
+        self.__maze.init_map(width, height, start_pos, end_pos, add_ft_pattern)
 
     @abstractmethod
-    def generate(
-        self,
-        seed: Optional[str] = None
-    ) -> List[Cell]:
+    def generate(self, seed: Optional[str] = None) -> List[Cell]:
         pass
 
     def reset_maze(self) -> None:
@@ -47,7 +47,8 @@ class MazeGenerator(ABC):
             self.__width,
             self.__height,
             self.__start_pos,
-            self.__end_pos
+            self.__end_pos,
+            self.__add_ft_pattern
         )
 
     def find_shortest_path(self) -> List[Cell]:
@@ -60,8 +61,7 @@ class MazeGenerator(ABC):
     def format_output(self) -> str:
         # TODO: Format the maze to an output string
         raise NotImplementedError(
-            "Method format_output of MazeGenerator"
-            + " not yet implemented"
+            "Method format_output of MazeGenerator" + " not yet implemented"
         )
 
     def get_solution(self) -> Union[List[Cell], None]:
