@@ -1,6 +1,7 @@
+from generator.GeneratorException import GeneratorException
 from generator.Vec2 import Vec2
 from generator.Cell import Cell
-from generator.Maze import Maze
+from generator.Maze import Coord, Maze
 from typing import Optional, Union, List
 from abc import ABC, abstractmethod
 from random import Random
@@ -8,7 +9,7 @@ from random import Random
 
 class MazeGenerator(ABC):
 
-    __solution: Union[List[Cell], None]
+    __solution: List[Cell]
     __maze: Maze
     __seed: Union[str, None]
     __rng: Random
@@ -27,6 +28,7 @@ class MazeGenerator(ABC):
         seed: Optional[str] = None,
         add_ft_pattern: bool = False,
     ) -> None:
+        self.__solution = []
         self.__seed = seed
         self.__rng = Random(seed)
         self.__maze = Maze()
@@ -59,13 +61,37 @@ class MazeGenerator(ABC):
         )
 
     def format_output(self) -> str:
-        # TODO: Format the maze to an output string
-        raise NotImplementedError(
-            "Method format_output of MazeGenerator" + " not yet implemented"
-        )
+        digits = "0123456789ABCDEF"
+        output = ""
+        for line in self.get_maze().map:
+            for cell in line:
+                if cell.walls > len(digits):
+                    raise GeneratorException(f"Invalid walls value {cell.walls}")
+                digit = digits[cell.walls]
+                output += digit
+            output += "\n"
+        output += "\n"
+        output += f"{self.__start_pos.x,self.__start_pos.y}\n"
+        output += f"{self.__end_pos.x,self.__end_pos.y}\n"
+        solution_coords = [(0, 0)] + self.get_solution()
+        solutions_moves = ""
+        for i in range(len(solution_coords) - 1):
+            curr_coords = solution_coords[i]
+            next_coords = solution_coords[i + 1]
+            if curr_coords[0] < next_coords[0]:
+                solutions_moves += "E"
+            elif curr_coords[0] > next_coords[0]:
+                solutions_moves += "W"
+            elif curr_coords[1] < next_coords[1]:
+                solutions_moves += "S"
+            elif curr_coords[1] > next_coords[1]:
+                solutions_moves += "N"
+        output += solutions_moves
+        output += "\n"
+        return output
 
-    def get_solution(self) -> Union[List[Cell], None]:
-        return self.__solution
+    def get_solution(self) -> List[Coord]:
+        return self.__maze.solution
 
     def get_maze(self) -> Maze:
         return self.__maze
