@@ -183,6 +183,9 @@ def parse(filename: str) -> Parsed:
             if key not in VALID_KEYS:
                 raise ParseError(f"Key is invalid ({key})")
 
+            if key in values:
+                raise ParseError(f"Key defines multiple times ({key})")
+
             values[key.lower()] = FUNCTION_FOR_KEY[key](value)
 
     typed: ParsedDict = {
