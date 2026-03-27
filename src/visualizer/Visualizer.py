@@ -374,12 +374,10 @@ class Visualizer:
                 self.generator.generate()
                 self.maze = self.generator.get_maze().map
                 self.generator.get_maze().solve()
-                with open("output_maze.txt", "w") as out:
-                    out.write(self.generator.format_output())
+                self.generator.write_output_file()
                 self.path = self.generator.get_maze().solution
                 self.draw_maze()
                 state[EEvents.REGEN] = False
-
 
             if state[EEvents.PATH_TOGGLE]:
                 self.need_to_draw_path = not self.need_to_draw_path

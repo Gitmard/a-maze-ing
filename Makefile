@@ -20,6 +20,9 @@ install: $(POETRY)
 run: install
 	$(POETRY) run python $(SRC)/main.py $(CONFIG)
 
+run-tests: install
+	$(POETRY) run python $(SRC)/main.py $(CONFIG) -t
+
 debug: install
 	$(POETRY) run python -m pdb $(SRC)/main.py $(CONFIG)
 
@@ -33,5 +36,5 @@ lint: install
 	$(POETRY) run mypy $(SRC)
 
 lint-strict: install
-	$(POETRY) run flake8 $(SRC)
 	$(POETRY) run mypy $(SRC) --strict
+	$(POETRY) run flake8 $(SRC)

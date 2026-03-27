@@ -183,9 +183,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
         ):
             if not len(available_y_pos):
                 raise (
-                    GeneratorException(
-                        "No available space to add openning"
-                    )
+                    GeneratorException("No available space to add openning")
                 )
             opening_y = available_y_pos.pop(
                 self.__gauss_randint(0, len(available_y_pos) - 1)
@@ -243,8 +241,8 @@ class RecursiveDivisionGenerator(MazeGenerator):
             if not len(available_x_pos):
                 raise (
                     GeneratorException(
-                        "No available space to add openning" +
-                        f" current_frame={current_frame}"
+                        "No available space to add openning"
+                        + f" current_frame={current_frame}"
                     )
                 )
             opening_x = available_x_pos.pop(
@@ -334,7 +332,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
                         self.get_maze().ft_pattern_end.y - 2,
                     ),
                     hardcoded=True,
-                )
+                ),
             ]
             if len(self.get_maze().locked_cells)
             else [

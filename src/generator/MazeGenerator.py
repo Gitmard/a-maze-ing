@@ -9,7 +9,6 @@ from random import Random
 
 class MazeGenerator(ABC):
 
-    __solution: List[Cell]
     __maze: Maze
     __seed: Union[str, None]
     __rng: Random
@@ -17,7 +16,8 @@ class MazeGenerator(ABC):
     __width: int
     __start_pos: Vec2
     __end_pos: Vec2
-    __add_ft_pattern: True
+    __add_ft_pattern: bool
+    __output_file: str
 
     def __init__(
         self,
@@ -27,8 +27,8 @@ class MazeGenerator(ABC):
         end_pos: Vec2,
         seed: Optional[str] = None,
         add_ft_pattern: bool = False,
+        output_file: str = "output_maze.txt",
     ) -> None:
-        self.__solution = []
         self.__seed = seed
         self.__rng = Random(seed)
         self.__maze = Maze()
@@ -38,6 +38,7 @@ class MazeGenerator(ABC):
         self.__end_pos = end_pos
         self.__add_ft_pattern = add_ft_pattern
         self.__maze.init_map(width, height, start_pos, end_pos, add_ft_pattern)
+        self.__output_file = output_file
 
     @abstractmethod
     def generate(self, seed: Optional[str] = None) -> List[Cell]:
@@ -50,7 +51,7 @@ class MazeGenerator(ABC):
             self.__height,
             self.__start_pos,
             self.__end_pos,
-            self.__add_ft_pattern
+            self.__add_ft_pattern,
         )
 
     def find_shortest_path(self) -> List[Cell]:
@@ -60,13 +61,15 @@ class MazeGenerator(ABC):
             + " not yet implemented"
         )
 
-    def format_output(self) -> str:
+    def __format_output(self) -> str:
         digits = "0123456789ABCDEF"
         output = ""
         for line in self.get_maze().map:
             for cell in line:
                 if cell.walls > len(digits):
-                    raise GeneratorException(f"Invalid walls value {cell.walls}")
+                    raise GeneratorException(
+                        f"Invalid walls value {cell.walls}"
+                    )
                 digit = digits[cell.walls]
                 output += digit
             output += "\n"
@@ -89,6 +92,10 @@ class MazeGenerator(ABC):
         output += solutions_moves
         output += "\n"
         return output
+
+    def write_output_file(self) -> None:
+        with open(self.__output_file, "w") as out:
+            out.write(self.__format_output())
 
     def get_solution(self) -> List[Coord]:
         return self.__maze.solution
