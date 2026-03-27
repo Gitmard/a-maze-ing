@@ -114,12 +114,7 @@ class Visualizer:
             self.window_height,
             "A-Maze-Ing",
         )
-        self.isolated_cells: List[Cell] = [
-            cell
-            for row in self.maze
-            for cell in row
-            if cell.walls == EDirection.ALL
-        ]
+        self.isolated_cells: List[Cell] = []
 
         self.img: Any = self.m.mlx_new_image(
             self.mlx_ptr, self.window_width, self.window_height
@@ -374,6 +369,12 @@ class Visualizer:
                 self.generator.generate()
                 self.maze = self.generator.get_maze().map
                 self.generator.get_maze().solve()
+                self.isolated_cells = [
+                    cell for row in self.maze
+                    for cell in row
+                    if cell.walls == EDirection.ALL
+                ]
+
                 self.generator.write_output_file()
                 self.path = self.generator.get_maze().solution
                 self.draw_maze()

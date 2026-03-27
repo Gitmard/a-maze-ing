@@ -3,7 +3,7 @@ POETRY       := $(VENV)/bin/poetry
 PYTHON       := $(VENV)/bin/python
 PIP          := $(VENV)/bin/pip
 SRC          := src
-CONFIG       ?= config_test.txt
+CONFIG       ?= config.txt
 
 $(VENV):
 	python3 -m venv $(VENV)
@@ -32,6 +32,8 @@ debug: install
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	rm -rf .mypy_cache
+
+fclean: clean
 	rm -rf $(VENV)
 
 lint: install
