@@ -42,6 +42,7 @@ class Maze:
     ft_pattern_start: Vec2
     ft_pattern_end: Vec2
     add_ft_pattern: bool
+    solution: List[Coord]
 
     def __init__(self) -> None:
         self.map: List[List[Cell]] = []
@@ -55,6 +56,7 @@ class Maze:
         self.ft_pattern_end = Vec2(0, 0)
         self.ft_pattern_end = Vec2(0, 0)
         self.add_ft_pattern = False
+        self.solution = []
 
     def reset_map(self) -> None:
         """Reset every cell and revert status to ``BLANK``."""
@@ -79,7 +81,6 @@ class Maze:
             start_pos: Maze entry coordinates.
             end_pos: Maze exit coordinates.
         """
-        print("init ta mere la chauve")
         self.status = Maze.Status.INITIALIZED
         self.width = width
         self.height = height
@@ -118,7 +119,6 @@ class Maze:
             and width >= ft_pattern_width
         ):
 
-            print("tabarnak de ft pattern ta mere la chauve")
             ft_pattern_y = height // 2 - ft_pattern_height // 2
             ft_pattern_x = width // 2 - ft_pattern_width // 2
 

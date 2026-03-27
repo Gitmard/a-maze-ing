@@ -32,8 +32,11 @@ def main(filename: str) -> None:
         add_ft_pattern=True,
     )
     # generator.generate(show_progress=False)
-    # AsciiMazeVisualizer.display_maze(generator.get_maze())
     visualize(generator)
+    # generator.generate()
+    # generator.get_maze().solve()
+    # AsciiMazeVisualizer.display_maze(generator.get_maze())
+    # print(generator.get_solution())
 
 
 if __name__ == "__main__":
