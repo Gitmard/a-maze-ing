@@ -36,7 +36,6 @@ def main(filename: str) -> None:
     # generator.generate()
     # generator.get_maze().solve()
     # AsciiMazeVisualizer.display_maze(generator.get_maze())
-    # print(generator.get_solution())
 
 
 if __name__ == "__main__":

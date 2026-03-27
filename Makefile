@@ -3,7 +3,7 @@ POETRY       := $(VENV)/bin/poetry
 PYTHON       := $(VENV)/bin/python
 PIP          := $(VENV)/bin/pip
 SRC          := src
-CONFIG       ?= config.txt
+CONFIG       ?= config_test.txt
 
 $(VENV):
 	python3 -m venv $(VENV)

@@ -220,7 +220,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
             # Update the cells adjacent to the wall
             if not curr_cells[0].locked:
                 curr_cells[0].enclose(EDirection.SOUTH)
-            if not curr_cells[0].locked:
+            if not curr_cells[1].locked:
                 curr_cells[1].enclose(EDirection.NORTH)
             edited_cells.extend(curr_cells)
 
@@ -243,7 +243,8 @@ class RecursiveDivisionGenerator(MazeGenerator):
             if not len(available_x_pos):
                 raise (
                     GeneratorException(
-                        "No available space to add openning"
+                        "No available space to add openning" +
+                        f" current_frame={current_frame}"
                     )
                 )
             opening_x = available_x_pos.pop(
@@ -333,7 +334,7 @@ class RecursiveDivisionGenerator(MazeGenerator):
                         self.get_maze().ft_pattern_end.y - 2,
                     ),
                     hardcoded=True,
-                ),
+                )
             ]
             if len(self.get_maze().locked_cells)
             else [
@@ -374,7 +375,6 @@ class RecursiveDivisionGenerator(MazeGenerator):
             try:
                 # Slice the current frame in two
                 new_frames = self.__create_new_frames(current_frame)
-                # print("New frames:", new_frames, sep="\n")
 
                 # Add a wall using the first frame
                 # For a vertical split, the index 0

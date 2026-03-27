@@ -129,9 +129,7 @@ class Maze:
                     )
 
                     if ft_pattern[y][x] == 1:
-                        self.map[ft_pattern_y + y][
-                            ft_pattern_x + x
-                        ].locked = False
+                        self.map[ft_pattern_y + y][ft_pattern_x + x].locked = False
                         self.locked_cells.append(
                             self.map[ft_pattern_y + y][ft_pattern_x + x]
                         )
@@ -150,6 +148,9 @@ class Maze:
                         self.map[ft_pattern_y + y][
                             ft_pattern_x + x - 1
                         ].enclose(EDirection.EAST)
+
+            self.map[ft_pattern_y + 4][ft_pattern_x + 3].enclose(EDirection.SOUTH)
+            self.map[ft_pattern_y + 5][ft_pattern_x + 3].enclose(EDirection.NORTH)
 
             for locked_cell in self.locked_cells:
                 locked_cell.locked = True
