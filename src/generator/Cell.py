@@ -11,7 +11,7 @@ class Cell:
     def __init__(
         self,
         position: Vec2,
-        walls: int = 0,
+        walls: int = EDirection.ALL.value,
         locked: bool = False,
     ):
         self.position = position
@@ -30,4 +30,5 @@ class Cell:
             self.walls -= direction.value
 
     def reset_cell(self) -> None:
-        self.walls = 0
+        self.walls = EDirection.ALL.value
+        self.locked = False

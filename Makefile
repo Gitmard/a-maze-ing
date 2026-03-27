@@ -20,6 +20,9 @@ install: $(POETRY)
 run: install
 	$(POETRY) run python $(SRC)/main.py $(CONFIG)
 
+run-ascii: install
+	$(POETRY) run python $(SRC)/main.py $(CONFIG) -a
+
 run-tests: install
 	$(POETRY) run python $(SRC)/main.py $(CONFIG) -t
 

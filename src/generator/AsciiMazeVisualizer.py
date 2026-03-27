@@ -1,3 +1,6 @@
+from typing import List, Set, Tuple
+
+from generator.Cell import Cell
 from generator.EDirection import EDirection
 from generator.Maze import Maze
 from colorama import Back
@@ -9,12 +12,68 @@ BG_END = Back.BLUE
 BG_SOLUTION = Back.RED
 
 
+def find_neighbor(maze: List[List[int]], cell: Tuple[Cell]):
+    x, y = cell
+
+    directions = {1: (0, -1), 2: (1, 0), 4: (0, 1), 8: (-1, 0)}
+
+    for dir, move in directions.items():
+        move_x, move_y = move
+        if not (maze[y][x].walls & dir):
+            yield (x + move_x, y + move_y)
+
+
+def find_paths(
+    maze: List[List[int]], entry: Tuple[int, int], exit: Tuple[int, int]
+) -> Set[Tuple[int, int]]:
+    path_count = 0
+    explored_set = set()
+
+    path_cells = set()
+
+    def dfs(curr_cell: Tuple[int, int]) -> bool:
+        nonlocal path_count
+        nonlocal explored_set
+
+        if curr_cell == exit:
+            path_count += 1
+            path_cells.add(curr_cell)
+            return True
+
+        explored_set.add(curr_cell)
+
+        ret = False
+
+        for n in find_neighbor(maze, curr_cell):
+            if n not in explored_set:
+                if dfs(n):
+                    path_cells.add(curr_cell)
+                    ret = True
+
+        explored_set.remove(curr_cell)
+
+        return ret
+
+    dfs(entry)
+    return path_cells
+
+
 class AsciiMazeVisualizer:
 
     @staticmethod
     def display_maze(maze: Maze) -> None:
         width = maze.width
         height = maze.height
+
+        solutions = (
+            find_paths(
+                maze.map,
+                (maze.start_pos.x, maze.start_pos.y),
+                (maze.end_pos.x, maze.end_pos.y),
+            )
+            if maze.status == Maze.Status.GENERATED
+            else set()
+        )
 
         top_line_coords = "    "
         for i in range(width):
@@ -52,9 +111,8 @@ class AsciiMazeVisualizer:
                                 if (
                                     any(
                                         cell.position.x == solution_cell[0]
-                                        and cell.position.y
-                                        == solution_cell[1]
-                                        for solution_cell in maze.solution
+                                        and cell.position.y == solution_cell[1]
+                                        for solution_cell in solutions
                                     )
                                 )
                                 else ""

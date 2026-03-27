@@ -1,10 +1,11 @@
 """Grid-based maze data structure with A* solver."""
 
 from generator.Cell import Cell
+from generator.GeneratorException import GeneratorException
 from generator.Vec2 import Vec2
 from generator.EDirection import EDirection
 from enum import IntEnum, auto
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Literal, Set, Tuple
 from sortedcontainers import SortedKeyList
 
 Coord = Tuple[int, int]
@@ -29,6 +30,7 @@ class Maze:
 
         BLANK = auto()
         INITIALIZED = auto()
+        GENERATING = auto()
         GENERATED = auto()
         SOLVED = auto()
 
@@ -39,8 +41,6 @@ class Maze:
     start_pos: Vec2
     end_pos: Vec2
     locked_cells: List[Cell]
-    ft_pattern_start: Vec2
-    ft_pattern_end: Vec2
     add_ft_pattern: bool
     solution: List[Coord]
 
@@ -52,8 +52,6 @@ class Maze:
         self.start_pos = Vec2(0, 0)
         self.end_pos = Vec2(0, 0)
         self.locked_cells = []
-        self.ft_pattern_start = Vec2(0, 0)
-        self.ft_pattern_end = Vec2(0, 0)
         self.ft_pattern_end = Vec2(0, 0)
         self.add_ft_pattern = False
         self.solution = []
@@ -94,16 +92,8 @@ class Maze:
             for y in range(height)
         ]
 
-        # Put the surrounding walls
-        for x in range(width):
-            self.map[0][x].enclose(EDirection.NORTH)
-            self.map[height - 1][x].enclose(EDirection.SOUTH)
-        for y in range(height):
-            self.map[y][0].enclose(EDirection.WEST)
-            self.map[y][width - 1].enclose(EDirection.EAST)
-
         # Put the ft pattern at the center of the maze
-        ft_pattern: List[List[int]] = [
+        ft_pattern: List[List[Literal[0, 1]]] = [
             [1, 0, 1, 0, 1, 1, 1],
             [1, 0, 1, 0, 0, 0, 1],
             [1, 1, 1, 0, 1, 1, 1],
@@ -128,44 +118,49 @@ class Maze:
                         ft_pattern[y][x] == 1
                     )
 
-                    if ft_pattern[y][x] == 1:
-                        self.map[ft_pattern_y + y][
-                            ft_pattern_x + x
-                        ].locked = False
-                        self.locked_cells.append(
-                            self.map[ft_pattern_y + y][ft_pattern_x + x]
-                        )
-                        self.map[ft_pattern_y + y][ft_pattern_x + x].enclose(
-                            EDirection.ALL
-                        )
-                        self.map[ft_pattern_y + y + 1][
-                            ft_pattern_x + x
-                        ].enclose(EDirection.NORTH)
-                        self.map[ft_pattern_y + y - 1][
-                            ft_pattern_x + x
-                        ].enclose(EDirection.SOUTH)
-                        self.map[ft_pattern_y + y][
-                            ft_pattern_x + x + 1
-                        ].enclose(EDirection.WEST)
-                        self.map[ft_pattern_y + y][
-                            ft_pattern_x + x - 1
-                        ].enclose(EDirection.EAST)
+    def carve_cell(self, cell: Cell, directions: int) -> None:
+        if cell.locked:
+            raise GeneratorException("Cannot carve a locked cell")
 
-            self.map[ft_pattern_y + 4][ft_pattern_x + 3].enclose(
+        if directions & EDirection.NORTH.value:
+            if cell.position.y <= 0:
+                raise GeneratorException(
+                    "Cannot carve a cell with y = 0 to the north"
+                )
+            self.map[cell.position.y - 1][cell.position.x].carve(
                 EDirection.SOUTH
             )
-            self.map[ft_pattern_y + 5][ft_pattern_x + 3].enclose(
+            cell.carve(EDirection.NORTH)
+
+        if directions & EDirection.EAST.value:
+            if cell.position.x >= self.width - 1:
+                raise GeneratorException(
+                    "Cannot carve a cell with x = width - 1 to the east"
+                )
+            self.map[cell.position.y][cell.position.x + 1].carve(
+                EDirection.WEST
+            )
+            cell.carve(EDirection.EAST)
+
+        if directions & EDirection.SOUTH.value:
+            if cell.position.y >= self.height - 1:
+                raise GeneratorException(
+                    "Cannot carve a cell with y = height - 1 to the south"
+                )
+            self.map[cell.position.y + 1][cell.position.x].carve(
                 EDirection.NORTH
             )
+            cell.carve(EDirection.SOUTH)
 
-            for locked_cell in self.locked_cells:
-                locked_cell.locked = True
-
-            self.ft_pattern_start = Vec2(ft_pattern_x, ft_pattern_y)
-            self.ft_pattern_end = Vec2(
-                ft_pattern_x + ft_pattern_width,
-                ft_pattern_y + ft_pattern_height,
+        if directions & EDirection.WEST.value:
+            if cell.position.x <= 0:
+                raise GeneratorException(
+                    "Cannot carve a cell with x = 0 to the west"
+                )
+            self.map[cell.position.y][cell.position.x - 1].carve(
+                EDirection.EAST
             )
+            cell.carve(EDirection.WEST)
 
     def solve(self) -> None:
         """Find the shortest path from entry to exit using A*.
