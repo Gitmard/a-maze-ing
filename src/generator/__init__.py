@@ -2,7 +2,7 @@ __all__ = [
     "MazeGenerator",
     "EDirection",
     "Cell",
-    "RecursiveDivisionGenerator",
+    "DepthFirstSearchGenerator",
     "Maze",
     "Vec2",
 ]
@@ -10,6 +10,6 @@ __all__ = [
 from .MazeGenerator import MazeGenerator
 from .EDirection import EDirection
 from .Cell import Cell
-from .RecursiveDivisionGenerator import RecursiveDivisionGenerator
+from .DepthFirstSearchGenerator import DepthFirstSearchGenerator
 from .Maze import Maze
 from .Vec2 import Vec2
