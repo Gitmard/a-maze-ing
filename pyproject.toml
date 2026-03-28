@@ -27,6 +27,30 @@ ignore_missing_imports = true
 module = ["mlx.*", "sortedcontainers.*", "pynput.*"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = ["mlx.*", "sortedcontainers.*", "pynput.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["mlx.*", "sortedcontainers.*", "pynput.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["mlx.*", "sortedcontainers.*", "pynput.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["mlx.*", "sortedcontainers.*", "pynput.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["mlx.*", "sortedcontainers.*", "pynput.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["mlx.*", "sortedcontainers.*", "pynput.*"]
+ignore_missing_imports = true
+
 [tool.poetry]
 name = "amazeing"
 version = "0.1.0"
@@ -44,6 +68,7 @@ pydantic = "^2.12.5"
 mlx = {path = "mlx/mlx-2.2-py3-none-any.whl"}
 pynput = "^1.8.1"
 colorama = "^0.4.6"
+sortedcontainers-stubs = "^2.4.3"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.0"

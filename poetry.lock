@@ -626,6 +626,22 @@ files = [
 ]
 
 [[package]]
+name = "sortedcontainers-stubs"
+version = "2.4.3"
+description = "Type stubs for sortedcontainers"
+optional = false
+python-versions = "<4.0,>=3.9"
+groups = ["main"]
+files = [
+    {file = "sortedcontainers_stubs-2.4.3-py3-none-any.whl", hash = "sha256:4496109dfa6645e4b675f57fbc7e42ec4d1bed2c74aab7fa379e0795e49fe406"},
+    {file = "sortedcontainers_stubs-2.4.3.tar.gz", hash = "sha256:ba172daceda4bd617d2f6ffd24582261a494da92705409651967faa40ebc75dd"},
+]
+
+[package.dependencies]
+sortedcontainers = ">=2,<3"
+typing-extensions = ">=4.1.0,<5.0.0"
+
+[[package]]
 name = "tomli"
 version = "2.4.0"
 description = "A lil' TOML parser"
@@ -713,4 +729,4 @@ typing-extensions = ">=4.12.0"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "4439148697223a239bb2dcccfc00ba5f18eec642313e11b3c6184ceb3e362a13"
+content-hash = "07a5d27288718c93acc4698114a7fe0a9520ca062ed64a72733662093096b3a8"
