@@ -94,8 +94,8 @@ class Maze:
 
         # Put the ft pattern at the center of the maze
         ft_pattern: List[List[Literal[0, 1]]] = [
-            [1, 0, 1, 0, 1, 1, 1],
-            [1, 0, 1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 1],
             [1, 1, 1, 0, 1, 1, 1],
             [0, 0, 1, 0, 1, 0, 0],
             [0, 0, 1, 0, 1, 1, 1],
@@ -105,18 +105,25 @@ class Maze:
 
         if (
             add_ft_pattern
-            and height > ft_pattern_height
-            and width >= ft_pattern_width
+            and height >= ft_pattern_height + 1
+            and width >= ft_pattern_width + 1
         ):
 
-            ft_pattern_y = height // 2 - ft_pattern_height // 2
-            ft_pattern_x = width // 2 - ft_pattern_width // 2
+            ft_pattern_y = int(height / 2 - (ft_pattern_height) / 2)
+            ft_pattern_x = int(width / 2 - (ft_pattern_width) / 2)
 
             for y in range(ft_pattern_height):
                 for x in range(ft_pattern_width):
-                    self.map[ft_pattern_y + y][ft_pattern_x + x].locked = (
+                    n_x = ft_pattern_x + x
+                    n_y = ft_pattern_y + y
+                    self.map[n_y][n_x].locked = (
                         ft_pattern[y][x] == 1
                     )
+                    if ft_pattern[y][x] == 1 and \
+                            Vec2(n_x, n_y) in [self.start_pos, self.end_pos]:
+                        raise GeneratorException(
+                            "Entry or exit cannot be in the 42 pattern"
+                        )
 
     def carve_cell(self, cell: Cell, directions: int) -> None:
         if cell.locked:

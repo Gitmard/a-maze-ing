@@ -307,9 +307,15 @@ class DepthFirstSearchGenerator(MazeGenerator):
 
         self.get_maze().status = Maze.Status.GENERATING
 
-        updated_cells: List[Cell] = [self.get_maze().map[0][0]]
+        start_cell = self._get_rng().choice([
+            cell for row in self.get_maze().map
+            for cell in row
+            if not cell.locked
+        ])
 
-        stack: List[Cell] = [self.get_maze().map[0][0]]
+        updated_cells: List[Cell] = [start_cell]
+
+        stack: List[Cell] = [start_cell]
         visited_cells: Set[Cell] = set()
 
         stack_len = 1
