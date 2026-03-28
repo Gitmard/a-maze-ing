@@ -32,6 +32,7 @@ def main(filename: str, flags: List[str]) -> None:
         Vec2(infos.exit[0], infos.exit[1]),
         seed=infos.seed if infos.seed != "[RANDOM]" else None,
         add_ft_pattern=True,
+        output_file=infos.output_file,
         is_perfect=infos.perfect
     )
 

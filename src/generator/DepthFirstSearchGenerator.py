@@ -227,7 +227,7 @@ class DepthFirstSearchGenerator(MazeGenerator):
 
         maze = self.get_maze()
 
-        def count_walls(cell: Cell):
+        def count_walls(cell: Cell) -> int:
             c = 0
             for dir in directions:
                 if cell.walls & dir.value:
@@ -243,7 +243,7 @@ class DepthFirstSearchGenerator(MazeGenerator):
 
         self._get_rng().shuffle(temp_available_cells)
 
-        available_cells: SortedKeyList[Cell] = SortedKeyList(
+        available_cells: SortedKeyList[Cell, int] = SortedKeyList(
             temp_available_cells,
             key=lambda x: count_walls(x)
         )

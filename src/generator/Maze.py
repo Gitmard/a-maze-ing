@@ -171,7 +171,7 @@ class Maze:
         start: Coord = (self.start_pos.x, self.start_pos.y)
         end: Coord = (self.end_pos.x, self.end_pos.y)
 
-        pq: SortedKeyList[Tuple[int, int, Coord]] = SortedKeyList(
+        pq: SortedKeyList[Tuple[int, int, Coord], int] = SortedKeyList(
             [(0, 0, start)],
             key=lambda item: -item[0],
         )
