@@ -27,6 +27,7 @@ class MazeGenerator(ABC):
         end_pos: Vec2,
         seed: Optional[str] = None,
         add_ft_pattern: bool = False,
+        is_perfect: bool = True,
         output_file: str = "output_maze.txt",
     ) -> None:
         self.__seed = seed
@@ -38,6 +39,7 @@ class MazeGenerator(ABC):
         self.__end_pos = end_pos
         self.__add_ft_pattern = add_ft_pattern
         self.__maze.init_map(width, height, start_pos, end_pos, add_ft_pattern)
+        self.__is_perfect = is_perfect
         self.__output_file = output_file
 
     @abstractmethod
@@ -108,3 +110,6 @@ class MazeGenerator(ABC):
 
     def _get_rng(self) -> Random:
         return self.__rng
+
+    def _get_perfect(self) -> bool:
+        return self.__is_perfect

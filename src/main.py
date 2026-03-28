@@ -32,6 +32,7 @@ def main(filename: str, flags: List[str]) -> None:
         Vec2(infos.exit[0], infos.exit[1]),
         seed=infos.seed if infos.seed != "[RANDOM]" else None,
         add_ft_pattern=True,
+        is_perfect=infos.perfect
     )
 
     if "--ascii" in flags or "-a" in flags:
@@ -48,5 +49,4 @@ if __name__ == "__main__":
         main(sys.argv[1], sys.argv[1:])
     except Exception as e:
         print(f"an unexpected exception occured ({e})")
-        # sys.exit(1)
-        raise e
+        sys.exit(1)

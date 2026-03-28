@@ -17,7 +17,7 @@ from generator import MazeGenerator
 from generator.Cell import Cell
 from generator.EDirection import EDirection
 
-WALL_WIDTH_RATIO: float = 0.1
+WALL_WIDTH_RATIO: float = 0.15
 
 
 class EWalls(Enum):
