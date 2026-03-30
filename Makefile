@@ -8,10 +8,7 @@ SRC         := ./src
 CONFIG      ?= ./config.txt
 
 $(VENV):
-	python3 -m venv $(VENV) --without-pip
-	curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-	$(PYTHON) get-pip.py
-	rm get-pip.py
+	python3 -m venv $(VENV)
 
 $(MAZEGEN): $(VENV)
 	$(PIP) install build
