@@ -20,7 +20,8 @@ class DepthFirstSearchGenerator(MazeGenerator):
             .locked
             and self.get_maze().map[curr_cell.position.y - 1][
                 curr_cell.position.x
-            ] not in visited_cells
+            ]
+            not in visited_cells
         ):
             avaiable_directions.append(EDirection.NORTH)
 
@@ -31,7 +32,8 @@ class DepthFirstSearchGenerator(MazeGenerator):
             .locked
             and self.get_maze().map[curr_cell.position.y][
                 curr_cell.position.x - 1
-            ] not in visited_cells
+            ]
+            not in visited_cells
         ):
             avaiable_directions.append(EDirection.WEST)
 
@@ -42,7 +44,8 @@ class DepthFirstSearchGenerator(MazeGenerator):
             .locked
             and self.get_maze().map[curr_cell.position.y + 1][
                 curr_cell.position.x
-            ] not in visited_cells
+            ]
+            not in visited_cells
         ):
             avaiable_directions.append(EDirection.SOUTH)
 
@@ -53,7 +56,8 @@ class DepthFirstSearchGenerator(MazeGenerator):
             .locked
             and self.get_maze().map[curr_cell.position.y][
                 curr_cell.position.x + 1
-            ] not in visited_cells
+            ]
+            not in visited_cells
         ):
             avaiable_directions.append(EDirection.EAST)
 
@@ -69,7 +73,7 @@ class DepthFirstSearchGenerator(MazeGenerator):
             EDirection.NORTH,
             EDirection.EAST,
             EDirection.SOUTH,
-            EDirection.WEST
+            EDirection.WEST,
         ]
 
         direction_neighbor = {
@@ -83,7 +87,7 @@ class DepthFirstSearchGenerator(MazeGenerator):
             EDirection.NORTH: EDirection.SOUTH,
             EDirection.EAST: EDirection.WEST,
             EDirection.SOUTH: EDirection.NORTH,
-            EDirection.WEST: EDirection.EAST
+            EDirection.WEST: EDirection.EAST,
         }
 
         for dir in directions:
@@ -157,8 +161,10 @@ class DepthFirstSearchGenerator(MazeGenerator):
 
         for cx, cy in candidates:
             if (
-                cx < 0 or cx + 2 >= maze.width
-                or cy < 0 or cy + 2 >= maze.height
+                cx < 0
+                or cx + 2 >= maze.width
+                or cy < 0
+                or cy + 2 >= maze.height
             ):
                 continue
 
@@ -215,7 +221,7 @@ class DepthFirstSearchGenerator(MazeGenerator):
             EDirection.NORTH,
             EDirection.EAST,
             EDirection.SOUTH,
-            EDirection.WEST
+            EDirection.WEST,
         ]
 
         direction_neighbor = {
@@ -235,24 +241,23 @@ class DepthFirstSearchGenerator(MazeGenerator):
             return c
 
         temp_available_cells: List[Cell] = [
-            cell
-            for row in maze.map
-            for cell in row
-            if not cell.locked
+            cell for row in maze.map for cell in row if not cell.locked
         ]
 
         self._get_rng().shuffle(temp_available_cells)
 
         available_cells: SortedKeyList[Cell, int] = SortedKeyList(
-            temp_available_cells,
-            key=lambda x: count_walls(x)
+            temp_available_cells, key=lambda x: count_walls(x)
         )
 
-        wall_number = sum([
-            1 for cell in available_cells
-            for dir in directions
-            if cell.walls & dir.value
-        ])
+        wall_number = sum(
+            [
+                1
+                for cell in available_cells
+                for dir in directions
+                if cell.walls & dir.value
+            ]
+        )
 
         wall_number -= (maze.height + maze.width) * 2
 
@@ -295,9 +300,7 @@ class DepthFirstSearchGenerator(MazeGenerator):
             if breaked:
                 available_cells.add(cell)
 
-    def generate(
-        self, seed: Optional[str] = None
-    ) -> List[Cell]:
+    def generate(self, seed: Optional[str] = None) -> List[Cell]:
 
         if seed is not None:
             self._get_rng().seed(seed)
@@ -307,11 +310,14 @@ class DepthFirstSearchGenerator(MazeGenerator):
 
         self.get_maze().status = Maze.Status.GENERATING
 
-        start_cell = self._get_rng().choice([
-            cell for row in self.get_maze().map
-            for cell in row
-            if not cell.locked
-        ])
+        start_cell = self._get_rng().choice(
+            [
+                cell
+                for row in self.get_maze().map
+                for cell in row
+                if not cell.locked
+            ]
+        )
 
         updated_cells: List[Cell] = [start_cell]
 

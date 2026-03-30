@@ -5,7 +5,7 @@ from generator.GeneratorException import GeneratorException
 from generator.Vec2 import Vec2
 from generator.EDirection import EDirection
 from enum import IntEnum, auto
-from typing import Dict, List, Literal, Set, Tuple
+from typing import Dict, List, Literal, Optional, Set, Tuple
 from sortedcontainers import SortedKeyList
 
 Coord = Tuple[int, int]
@@ -45,6 +45,8 @@ class Maze:
     solution: List[Coord]
 
     def __init__(self) -> None:
+        """Initialize an empty maze in ``BLANK``
+        status with no grid allocated."""
         self.map: List[List[Cell]] = []
         self.height = 0
         self.width = 0
@@ -69,22 +71,30 @@ class Maze:
         height: int,
         start_pos: Vec2,
         end_pos: Vec2,
-        add_ft_pattern: bool = False,
+        locked_cells: Optional[List[List[Literal[0, 1]]]] = None
     ) -> None:
-        """Allocate the grid and seal the border walls.
+        """Allocate the grid and optionally overlay the 42 pattern.
+
+        Cells that are part of the 42 pattern are marked as locked,
+        preventing the generator from carving through them.
 
         Args:
             width: Number of columns.
             height: Number of rows.
             start_pos: Maze entry coordinates.
             end_pos: Maze exit coordinates.
+            add_ft_pattern: Whether to lock cells forming the 42 logo
+                at the center of the grid.
+
+        Raises:
+            GeneratorException: If ``start_pos`` or ``end_pos`` falls
+                inside the 42 pattern.
         """
         self.status = Maze.Status.INITIALIZED
         self.width = width
         self.height = height
         self.start_pos = start_pos
         self.end_pos = end_pos
-        self.add_ft_pattern = add_ft_pattern
 
         # Init the map as a list of list of cells
         self.map = [
@@ -92,40 +102,51 @@ class Maze:
             for y in range(height)
         ]
 
-        # Put the ft pattern at the center of the maze
-        ft_pattern: List[List[Literal[0, 1]]] = [
-            [1, 0, 0, 0, 1, 1, 1],
-            [1, 0, 0, 0, 0, 0, 1],
-            [1, 1, 1, 0, 1, 1, 1],
-            [0, 0, 1, 0, 1, 0, 0],
-            [0, 0, 1, 0, 1, 1, 1],
-        ]
-        ft_pattern_height = len(ft_pattern)
-        ft_pattern_width = len(ft_pattern[0])
+        if locked_cells is None:
+            return
+
+        locked_cells_height = len(locked_cells)
+        locked_cells_width = len(locked_cells[0])
 
         if (
-            add_ft_pattern
-            and height >= ft_pattern_height + 1
-            and width >= ft_pattern_width + 1
+            height >= locked_cells_height + 1
+            and width >= locked_cells_width + 1
         ):
 
-            ft_pattern_y = int(height / 2 - (ft_pattern_height) / 2)
-            ft_pattern_x = int(width / 2 - (ft_pattern_width) / 2)
+            locked_cells_y = int(height / 2 - (locked_cells_height) / 2)
+            locked_cells_x = int(width / 2 - (locked_cells_width) / 2)
 
-            for y in range(ft_pattern_height):
-                for x in range(ft_pattern_width):
-                    n_x = ft_pattern_x + x
-                    n_y = ft_pattern_y + y
-                    self.map[n_y][n_x].locked = (
-                        ft_pattern[y][x] == 1
-                    )
-                    if ft_pattern[y][x] == 1 and \
-                            Vec2(n_x, n_y) in [self.start_pos, self.end_pos]:
+            for y in range(locked_cells_height):
+                for x in range(locked_cells_width):
+                    n_x = locked_cells_x + x
+                    n_y = locked_cells_y + y
+                    self.map[n_y][n_x].locked = locked_cells[y][x] == 1
+                    if locked_cells[y][x] == 1 and Vec2(n_x, n_y) in [
+                        self.start_pos,
+                        self.end_pos,
+                    ]:
                         raise GeneratorException(
-                            "Entry or exit cannot be in the 42 pattern"
+                            "Entry or exit cannot be in the locked" +
+                            " cells pattern"
                         )
 
     def carve_cell(self, cell: Cell, directions: int) -> None:
+        """Remove walls between a cell and its neighbours
+        in the given directions.
+
+        Each direction in the bitmask opens the corresponding wall on ``cell``
+        and the matching wall on the adjacent cell (e.g. carving NORTH also
+        opens SOUTH on the cell above).
+
+        Args:
+            cell: The cell to carve from.
+            directions: Bitmask of ``EDirection`` values indicating which
+                walls to remove.
+
+        Raises:
+            GeneratorException: If ``cell`` is locked, or if carving in a
+                direction would go out of bounds.
+        """
         if cell.locked:
             raise GeneratorException("Cannot carve a locked cell")
 

@@ -20,12 +20,6 @@ install: $(POETRY)
 run: install
 	$(POETRY) run python $(SRC)/main.py $(CONFIG)
 
-run-ascii: install
-	$(POETRY) run python $(SRC)/main.py $(CONFIG) -a
-
-run-tests: install
-	$(POETRY) run python $(SRC)/main.py $(CONFIG) -t
-
 debug: install
 	$(POETRY) run python -m pdb $(SRC)/main.py $(CONFIG)
 
@@ -38,7 +32,7 @@ fclean: clean
 
 lint: install
 	$(POETRY) run flake8 $(SRC)
-	$(POETRY) run mypy $(SRC)
+	$(POETRY) run mypy $(SRC) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
 lint-strict: install
 	$(POETRY) run mypy $(SRC) --strict

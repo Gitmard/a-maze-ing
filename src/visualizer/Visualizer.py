@@ -370,7 +370,8 @@ class Visualizer:
                 self.maze = self.generator.get_maze().map
                 self.generator.get_maze().solve()
                 self.isolated_cells = [
-                    cell for row in self.maze
+                    cell
+                    for row in self.maze
                     for cell in row
                     if cell.walls == EDirection.ALL
                 ]
