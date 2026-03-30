@@ -1,7 +1,7 @@
-from generator.Maze import Maze
-from generator.EDirection import EDirection
-from generator.MazeGenerator import MazeGenerator
-from generator.Cell import Cell
+from mazegen.Maze import Maze
+from mazegen.EDirection import EDirection
+from mazegen.MazeGenerator import MazeGenerator
+from mazegen.Cell import Cell
 from typing import List, Optional, Set, Tuple
 from sortedcontainers import SortedKeyList
 

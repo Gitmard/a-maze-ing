@@ -1,9 +1,9 @@
 """Grid-based maze data structure with A* solver."""
 
-from generator.Cell import Cell
-from generator.GeneratorException import GeneratorException
-from generator.Vec2 import Vec2
-from generator.EDirection import EDirection
+from mazegen.Cell import Cell
+from mazegen.GeneratorException import GeneratorException
+from mazegen.Vec2 import Vec2
+from mazegen.EDirection import EDirection
 from enum import IntEnum, auto
 from typing import Dict, List, Literal, Optional, Set, Tuple
 from sortedcontainers import SortedKeyList

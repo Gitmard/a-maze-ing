@@ -1,7 +1,7 @@
-from generator.GeneratorException import GeneratorException
-from generator.Vec2 import Vec2
-from generator.Cell import Cell
-from generator.Maze import Coord, Maze
+from mazegen.GeneratorException import GeneratorException
+from mazegen.Vec2 import Vec2
+from mazegen.Cell import Cell
+from mazegen.Maze import Coord, Maze
 from typing import Literal, Optional, Union, List
 from abc import ABC, abstractmethod
 from random import Random

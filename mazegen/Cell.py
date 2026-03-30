@@ -1,6 +1,6 @@
-from generator.GeneratorException import GeneratorException
-from generator.EDirection import EDirection
-from generator.Vec2 import Vec2
+from mazegen.GeneratorException import GeneratorException
+from mazegen.EDirection import EDirection
+from mazegen.Vec2 import Vec2
 
 
 class Cell:
