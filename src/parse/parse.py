@@ -5,11 +5,9 @@ into a :class:`Parsed` model using Pydantic.
 """
 
 from typing import Callable, Dict, Optional, Set, Tuple, cast
-
 from typing_extensions import TypedDict
-
 from pydantic import BaseModel, Field, model_validator
-
+from time import time
 
 class ParseError(Exception):
     """Raised when the configuration file is malformed.
@@ -215,5 +213,11 @@ def parse(filename: str) -> Parsed:
         raise ParseError(f"Missing key output_file in {filename}")
     if values.get("width") is None:
         raise ParseError(f"Missing key width in {filename}")
+    if values.get("seed") == "" or values.get("seed") is None:
+        print("WARNING: You forgot to set the seed, generating one for you...")
+        curr_time = int(time())
+        random_seed = f"{curr_time}"
+        print(f"Using {random_seed} as a seed")
+        values["seed"] = random_seed
 
     return Parsed(**typed)
