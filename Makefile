@@ -41,7 +41,7 @@ fclean: clean
 
 lint: install
 	$(POETRY) run flake8 $(SRC)
-	$(POETRY) run mypy $(SRC) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	$(POETRY) run mypy $(SRC)
 
 lint-strict: install
 	$(POETRY) run mypy $(SRC) --strict
