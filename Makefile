@@ -22,6 +22,7 @@ $(POETRY): $(VENV) $(MAZEGEN)
 
 .PHONY: install run debug clean lint lint-strict
 
+build-mazegen: $(MAZEGEN)
 
 install: $(POETRY)
 	$(POETRY) install

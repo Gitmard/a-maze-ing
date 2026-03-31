@@ -5,121 +5,161 @@
 
 ## Description
 
-A-maze-ing is part of the common core curriculum. It's goal is to provide an introduction to graphical programming and maze generation algorithms
+A-maze-ing is part of the common core curriculum. Its goal is to provide an introduction to graphical programming and maze generation algorithms.
 
-The maze generation part of this project is ment to be reusable and to serve in a later project, PacMan, during wich the students will have to create a clone of the classic arcade game
+The program reads a configuration file, generates a maze, displays it visually in the terminal, and writes the result to an output file. The maze generation logic is packaged as a standalone, reusable Python module (`mazegen`) intended to be reused in a later project — PacMan — where students will build a clone of the classic arcade game.
 
 ## Instructions
 
-This project uses a virtual environment and a Makefile to streamline dependency management
+This project uses a virtual environment and a Makefile to streamline dependency management.
 
-To setup the venv and install the dependencies, use `make install`
-
-To run the project, use `make run`
-
-To lint the source code, use `make lint` or `make lint-strict`
-
-To remove the `__pycache__` and `.mypy_cache`, use `make clean`
-
-You can also delete the virtual environment files with `make fclean`
-
-Finally, use `make debug` to run a-maze-ing with pdb, python's builtin debugger
-
-When ran, a-maze-ing will read from the config file given as an argument to generate a maze. See the section *Config File* for details on the required structure.
-
-Once the maze generation is done, a visualizer will show the result.
+| Command | Description |
+|---|---|
+| `make install` | Set up the venv and install dependencies |
+| `make run` | Run the project with the default `config.txt` |
+| `make run CONFIG=myfile.txt` | Run with a custom config file |
+| `make lint` | Run `flake8` and `mypy` |
+| `make lint-strict` | Run `mypy --strict` |
+| `make debug` | Run with Python's built-in debugger (`pdb`) |
+| `make clean` | Remove `__pycache__` and `.mypy_cache` |
+| `make fclean` | Remove the virtual environment files |
 
 ### Visualizer controls
 
-| Keybind | Action                                            |
-|---------|---------------------------------------------------|
-| r       | Generate a new maze                               |
-| c       | Change the colors of the walls                    |
-| p       | Show the shortest path from the entry to the exit |
-| q       | Close the program                                 |
-
-
-## Resources
-
-Chepa drr
+| Key | Action |
+|-----|--------|
+| `r` | Generate a new maze |
+| `c` | Cycle through wall color themes |
+| `p` | Toggle shortest path display |
+| `q` | Quit |
 
 ## Config File
 
-A-maze-ing uses a config file to declare the dimension of the maze, the positions of the entry and the exit, the name of the output file, if the generated maze sould be *perfect* (only one path from the entry to the exit) and the seed used by the random number generator.
+The config file uses `KEY=VALUE` pairs, one per line. Lines starting with `#` are treated as comments and ignored.
 
-Here is an example of a config file:
-```
-WIDTH=100
-HEIGHT=100
-ENTRY=0,0
-EXIT=99,99
-OUTPUT_FILE=maze.txt
-PERFECT=True
-SEED=amazing!
-```
+| Key | Description | Example |
+|---|---|---|
+| `WIDTH` | Number of columns | `WIDTH=100` |
+| `HEIGHT` | Number of rows | `HEIGHT=100` |
+| `ENTRY` | Entry cell coordinates | `ENTRY=0,0` |
+| `EXIT` | Exit cell coordinates | `EXIT=99,99` |
+| `OUTPUT_FILE` | Path of the output file | `OUTPUT_FILE=maze.txt` |
+| `PERFECT` | Enforce a single path between entry and exit | `PERFECT=True` |
+| `SEED` | RNG seed for reproducible generation (optional) | `SEED=amazing!` |
 
-This config file can have any name, by default, the Makefile gives `config.txt` to the project but you can override the name with `make run [jsp frr mais on peut c'est sûr]`
+A default `config.txt` is provided at the root of the repository.
 
-## Alogrithms
+## Algorithm
 
-Our maze generator uses the Depth-First-Search algorithm.
+Our maze generator uses **Depth-First Search (DFS)** with a stack and a visited set.
 
-### Behaviour
+### How it works
 
-Depth first search uses a set of visited cells and a stack of the current path taken to generate perfect mazes.
+The maze is initialized with every cell fully enclosed (all 4 walls present). DFS starts from cell `(0, 0)`, picks a random unvisited neighbour, carves the wall between them, and pushes the new cell onto the stack. When no unvisited neighbour is available, it backtracks by popping the stack until one is found. The process repeats until every reachable cell has been visited.
 
-For DFS, the maze needs to be initialized with every cell fully enclosed.
+### Why DFS
 
-We intilialize the stack with an arbitrary cell (the one at 0,0 in our implementation). We then pick a random direction and remove the wall between the 2 cells, push the new cell to the stack and to to visited set. We repeat this process until there is no available direction then we backtrack (pop the last cell in the stack) until we find ourself at a position where we have an available direction.
+DFS was chosen because it handles **locked-cell obstacles** (the 42 pattern) naturally: when picking a direction to expand, locked cells are simply excluded from the candidates. The algorithm routes around them without any special casing. This is a key requirement of the project.
 
-A-maze-ing as a little quirk, every maze (when the size allows it) must have obstacles that trace a 42 in the middle of the maze. DFS allows us to work around the obstacles very elegently, when we pick a random direction to continue, we can exclude the ones that will lead to a locked cell (part of the 42)
-
-Since we never visit the same cell twice (thanks to the visited cells set), we are guaranteed to get a perfect maze out of this algorithm.
+We originally attempted to use Recursive Division, but that algorithm builds walls top-down rather than carving passages — making it fundamentally incompatible with pre-locked cells. Switching to DFS resolved this entirely.
 
 ## Reusability
 
-The maze generator of a-maze-ing must be reusable in other projects. Our project builds a standalone .whl archive that will include the source code of the generator module that can then be imported in any python project.
+The maze generation logic is packaged as a standalone Python module: `mazegen`. It is distributed as a `.whl` archive located at the root of the repository, installable via `pip`.
 
-### Example use:
+### Package structure
 
-```python
-from mazegen import MazeGenerator # Abstract class for polymorphism
-from mazegen import DepthFirstSearchGenerator # Specific DFS implementation
-from mazegen import Vec2 # Data class used to represent 2D coordinates
-
-generator: MazeGenerator = DepthFirstSearchGenerator(
-            width=30,
-            height=20,
-            entry=Vec2(0, 0),
-            exit=Vec2(29, 19),
-            seed="my-seed",
-            output_file="maze_output.txt",
-            is_perfect=True,
-            locked_cells=[
-                [1, 0, 0, 0, 1, 1, 1],
-                [1, 0, 0, 0, 0, 0, 1],
-                [1, 1, 1, 0, 1, 1, 1],
-                [0, 0, 1, 0, 1, 0, 0],
-                [0, 0, 1, 0, 1, 1, 1],
-            ] # Optionnal locked cells (for the 42 pattern in this case).
-			  # This argument defaults to None. If you only want a maze without obstacles, leave this argument to its default value.
-        )
-
-generator.generate() # Run the DepthFirstSearch algorithm
-
-generator.get_maze().solve() # Compute the shortest path between entry and exit using the A* algorithm
-
-generator.write_output_file() # Write an output file with the maze, entry and exit points and the shortest path to the file given to the constructor
+```
+mazegen
+├── Cell.py                     # Maze cell with bitmask wall representation
+├── DepthFirstSearchGenerator.py # DFS algorithm implementation
+├── EDirection.py               # Cardinal directions as IntFlag bitmask
+├── GeneratorException.py       # Custom exception
+├── MazeGenerator.py            # Abstract base class
+├── Maze.py                     # 2D grid + A* solver
+└── Vec2.py                     # 2D integer coordinate dataclass
 ```
 
-### Generator module structure
+### Installation
 
+```bash
+pip install mazegen-1.0.0-py3-none-any.whl
+```
 
+### Building the package
 
-## Project Managemement
+```bash
+pip install build
+python -m build
+```
+
+### Usage example
+
+```python
+from mazegen import DepthFirstSearchGenerator, MazeGenerator, Vec2, GeneratorException
+
+generator = DepthFirstSearchGenerator(
+	infos.width,
+	infos.height,
+	Vec2(infos.entry[0], infos.entry[1]),
+	Vec2(infos.exit[0], infos.exit[1]),
+	seed=infos.seed if infos.seed != "[RANDOM]" else None,
+	output_file=infos.output_file,
+	is_perfect=infos.perfect,
+	locked_cells=[
+		[1, 0, 0, 0, 1, 1, 1],
+		[1, 0, 0, 0, 0, 0, 1],
+		[1, 1, 1, 0, 1, 1, 1],
+		[0, 0, 1, 0, 1, 0, 0],
+		[0, 0, 1, 0, 1, 1, 1],
+	]  # Optional: Add obstacles in the maze
+)
+
+try:
+    generator.generate()               # Run the DFS algorithm
+    generator.get_maze().solve()       # Compute the shortest path with A*
+    generator.write_output_file()      # Write the output file
+
+    maze = generator.get_maze()        # Access the Maze object
+    solution = generator.get_solution()  # List of (x, y) coords from entry to exit
+except GeneratorException as e:
+    print("Generation failed:", e)
+```
+
+## Resources
+
+No external resources were used for this project — we already knew the DFS algorithm and implemented it from scratch.
+
+### Reference material
+
+- [Maze generation algorithms — Wikipedia](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
+- [Depth-first search — Wikipedia](https://en.wikipedia.org/wiki/Depth-first_search)
+- [A* search algorithm — Wikipedia](https://en.wikipedia.org/wiki/A*_search_algorithm)
+- [Python `heapq` documentation](https://docs.python.org/3/library/heapq.html)
+
+### AI use
+
+AI tools were used in the following ways:
+- **GitHub Copilot** — pull request reviews throughout the project
+- **Claude (Anthropic)** — development aid: architecture discussion, debugging, and docstring writing
+
+No AI-generated code was submitted as part of this project.
+
+## Project Management
 
 ### Roles
 
+| Login | Responsibilities |
+|---|---|
+| `smenard` | Maze generator module, README |
+| `vquetier` | Makefile, config parsing, visualizer |
+
 ### Planning
 
-### Critical Retrospective
+We started the project aiming to implement Recursive Division. After significant development work, we discovered it is incompatible with pre-locked obstacle cells — the algorithm assumes a fully open grid to subdivide. We pivoted to DFS, which solved the problem cleanly.
+
+### Retrospective
+
+**What went well:** DFS turned out to be a better fit than expected. Its elegance with locked cells meant very little extra logic was needed to support the 42 pattern. The separation between the `mazegen` module and the visualizer also paid off — each part could be developed and tested independently.
+
+**What could be improved:** A more thorough planning phase would have prevented the algorithm switch. Evaluating algorithm constraints against project requirements before writing any code is the main lesson taken from this project.
