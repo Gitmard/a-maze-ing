@@ -4,7 +4,7 @@ Reads a simple ``KEY=VALUE`` text file and validates the result
 into a :class:`Parsed` model using Pydantic.
 """
 
-from typing import Callable, Dict, Set, Tuple, cast
+from typing import Callable, Dict, Optional, Set, Tuple, cast
 
 from typing_extensions import TypedDict
 
@@ -41,7 +41,7 @@ class Parsed(BaseModel):
     exit: Tuple[int, int]
     output_file: str = Field(min_length=1)
     perfect: bool
-    seed: str
+    seed: Optional[str]
 
     @model_validator(mode="after")
     def validate_coords(self) -> "Parsed":
@@ -134,7 +134,7 @@ VALID_KEYS: Set[str] = {
     "SEED",
 }
 
-_identity: Callable[[str], str] = lambda x: x
+_identity: Callable[[Optional[str]], Optional[str]] = lambda x: x
 
 FUNCTION_FOR_KEY: Dict[str, Callable[..., object]] = {
     "WIDTH": int,
@@ -195,7 +195,7 @@ def parse(filename: str) -> Parsed:
         "exit": cast(Tuple[int, int], values["exit"]),
         "output_file": cast(str, values["output_file"]),
         "perfect": cast(bool, values["perfect"]),
-        "seed": cast(str, values["seed"]),
+        "seed": cast(str, values.get("seed"))
     }
 
     return Parsed(**typed)
