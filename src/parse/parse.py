@@ -9,6 +9,7 @@ from typing_extensions import TypedDict
 from pydantic import BaseModel, Field, model_validator
 from time import time
 
+
 class ParseError(Exception):
     """Raised when the configuration file is malformed.
 
