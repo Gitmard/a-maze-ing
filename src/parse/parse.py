@@ -169,33 +169,49 @@ def parse(filename: str) -> Parsed:
     values: Dict[str, object] = {}
 
     with open(filename) as f:
-        for raw_line in f:
-            line = raw_line.strip("\n")
+        try:
+            for raw_line in f:
+                line = raw_line.strip("\n")
 
-            if line.startswith("#") or len(line) == 0:
-                continue
+                if line.startswith("#") or len(line) == 0:
+                    continue
 
-            if "=" not in line:
-                raise ParseError(f"Malformed line (missing '='): {line}")
+                if "=" not in line:
+                    raise ParseError(f"Malformed line (missing '='): {line}")
 
-            key, value = line.split("=", maxsplit=1)
+                key, value = line.split("=", maxsplit=1)
 
-            if key not in VALID_KEYS:
-                raise ParseError(f"Key is invalid ({key})")
+                if key not in VALID_KEYS:
+                    raise ParseError(f"Key is invalid ({key})")
 
-            if key in values:
-                raise ParseError(f"Key defines multiple times ({key})")
+                if key in values:
+                    raise ParseError(f"Key defines multiple times ({key})")
 
-            values[key.lower()] = FUNCTION_FOR_KEY[key](value)
+                values[key.lower()] = FUNCTION_FOR_KEY[key](value)
+        except ValueError as err:
+            raise ParseError(f"{err}")
 
     typed: ParsedDict = {
-        "width": cast(int, values["width"]),
-        "height": cast(int, values["height"]),
-        "entry": cast(Tuple[int, int], values["entry"]),
-        "exit": cast(Tuple[int, int], values["exit"]),
-        "output_file": cast(str, values["output_file"]),
-        "perfect": cast(bool, values["perfect"]),
+        "width": cast(int, values.get("width")),
+        "height": cast(int, values.get("height")),
+        "entry": cast(Tuple[int, int], values.get("entry")),
+        "exit": cast(Tuple[int, int], values.get("exit")),
+        "output_file": cast(str, values.get("output_file")),
+        "perfect": cast(bool, values.get("perfect")),
         "seed": cast(str, values.get("seed"))
     }
+
+    if values.get("width") is None:
+        raise ParseError(f"Missing key width in {filename}")
+    if values.get("height") is None:
+        raise ParseError(f"Missing key height in {filename}")
+    if values.get("entry") is None:
+        raise ParseError(f"Missing key entry in {filename}")
+    if values.get("exit") is None:
+        raise ParseError(f"Missing key exit in {filename}")
+    if values.get("output_file") is None:
+        raise ParseError(f"Missing key output_file in {filename}")
+    if values.get("width") is None:
+        raise ParseError(f"Missing key width in {filename}")
 
     return Parsed(**typed)
