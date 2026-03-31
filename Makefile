@@ -41,9 +41,9 @@ fclean: clean
 	rm -rf $(VENV)
 
 lint: install
-	$(POETRY) run flake8 $(SRC)
-	$(POETRY) run mypy $(SRC) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	$(POETRY) run flake8 . --exclude=.venv
+	$(POETRY) run mypy . --exclude .venv --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
 lint-strict: install
-	$(POETRY) run mypy $(SRC) --strict
-	$(POETRY) run flake8 $(SRC)
+	$(POETRY) run mypy . --exclude .venv --strict
+	$(POETRY) run flake8 . --exclude=.venv
