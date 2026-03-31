@@ -64,8 +64,10 @@ class Parsed(BaseModel):
         if self.entry == self.exit:
             raise ValueError("Entry and exit should be different")
 
-        if self.width * self.height < 4 and self.perfect:
-            raise ValueError("Maze cannot be perfect with less than 4 cells")
+        if min(self.width, self.height) < 2 and self.perfect:
+            raise ValueError(
+                "Maze cannot be perfect with height or width to 1"
+            )
 
         return self
 
