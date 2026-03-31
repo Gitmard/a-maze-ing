@@ -1,23 +1,17 @@
+[tool.poetry]
+name = "mazegen"
+version = "1.0.0"
+packages = [{ include = "mazegen" }]
+
 [[tool.mypy.overrides]]
 module = ["mlx.*", "sortedcontainers.*", "pynput.*"]
 ignore_missing_imports = true
 follow_imports = "skip"
 
-[tool.poetry]
-name = "a-maze-ing"
-version = "0.1.0"
-description = "Maze generator and visualizer"
-authors = ["vquetier"]
-readme = "README.md"
-packages = [{ include = "generator", from = "src" },
-            { include = "visualizer", from = "src" },
-            { include = "parse", from = "src" }]
-
 [tool.poetry.dependencies]
 python = "^3.10"
 sortedcontainers = "^2.4.0"
 pydantic = "^2.12.5"
-mlx = {path = "mlx/mlx-2.2-py3-none-any.whl"}
 pynput = "^1.8.1"
 sortedcontainers-stubs = "^2.4.3"
 
@@ -41,5 +35,4 @@ module = ["mlx.*", "sortedcontainers.*", "pynput.*"]
 ignore_missing_imports = true
 
 [tool.flake8]
-max-line-length = 79
 exclude = [".venv", "__pycache__", ".mypy_cache"]

@@ -13,9 +13,9 @@ from mlx import Mlx
 from pynput import keyboard
 from pynput.keyboard import Key, KeyCode
 
-from generator import MazeGenerator
-from generator.Cell import Cell
-from generator.EDirection import EDirection
+from mazegen import MazeGenerator
+from mazegen.Cell import Cell
+from mazegen.EDirection import EDirection
 
 WALL_WIDTH_RATIO: float = 0.15
 
