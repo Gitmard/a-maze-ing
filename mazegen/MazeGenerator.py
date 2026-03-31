@@ -135,8 +135,10 @@ class MazeGenerator(ABC):
 
     def write_output_file(self) -> None:
         """Format and write the maze to the configured output file."""
+        print(f"Writing maze to {self.__output_file}")
         with open(self.__output_file, "w") as out:
             out.write(self.__format_output())
+        print("Finished writing output file")
 
     def get_solution(self) -> List[Coord]:
         """Return the solution path as a list of (x, y) coordinates."""
