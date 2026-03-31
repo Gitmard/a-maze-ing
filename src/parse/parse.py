@@ -35,8 +35,8 @@ class Parsed(BaseModel):
         seed: RNG seed string.
     """
 
-    width: int = Field(ge=1)
-    height: int = Field(ge=1)
+    width: int = Field(ge=1, le=200)
+    height: int = Field(ge=1, le=200)
     entry: Tuple[int, int]
     exit: Tuple[int, int]
     output_file: str = Field(min_length=1)
