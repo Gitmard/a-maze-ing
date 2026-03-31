@@ -273,7 +273,7 @@ class DepthFirstSearchGenerator(MazeGenerator):
             self._get_rng().shuffle(directions)
 
             for dir in directions:
-                breaked = False
+                broke = False
 
                 if not (cell.walls & dir.value):
                     continue
@@ -294,10 +294,10 @@ class DepthFirstSearchGenerator(MazeGenerator):
                 cell.walls &= ~dir.value
                 self._carve_around(cell)
                 break_count += 1
-                breaked = True
+                broke = True
                 break
 
-            if breaked:
+            if broke:
                 available_cells.add(cell)
 
     def generate(self, seed: Optional[str] = None) -> List[Cell]:
