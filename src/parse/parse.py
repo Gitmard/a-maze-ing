@@ -6,8 +6,11 @@ into a :class:`Parsed` model using Pydantic.
 
 from typing import Callable, Dict, Optional, Set, Tuple, cast
 from typing_extensions import TypedDict
+from mazegen import Vec2
 from pydantic import BaseModel, Field, model_validator
 from time import time
+
+from shared import ConfigValidator, InvalidConfigException
 
 
 class ParseError(Exception):
@@ -44,30 +47,18 @@ class Parsed(BaseModel):
 
     @model_validator(mode="after")
     def validate_coords(self) -> "Parsed":
-        """Check that entry/exit are in-bounds and distinct."""
-        if any(coord < 0 for coord in self.entry):
-            raise ValueError("Coordinates for entry should be positive")
-        if any(coord < 0 for coord in self.exit):
-            raise ValueError("Coordinates for exit should be positive")
-
-        if self.entry[0] >= self.width or self.entry[1] >= self.height:
-            raise ValueError(
-                "Coordinates for entry should be in the " "maze range"
+        try:
+            ConfigValidator.validate(
+                height=self.height,
+                width=self.width,
+                entry=Vec2(x=self.entry[0], y=self.entry[1]),
+                exit=Vec2(x=self.exit[0], y=self.exit[1]),
+                output_file=self.output_file,
+                perfect=self.perfect,
+                seed=self.seed
             )
-
-        if self.exit[0] >= self.width or self.exit[1] >= self.height:
-            raise ValueError(
-                "Coordinates for exit should be in the " "maze range"
-            )
-
-        if self.entry == self.exit:
-            raise ValueError("Entry and exit should be different")
-
-        if min(self.width, self.height) < 2 and self.perfect:
-            raise ValueError(
-                "Maze cannot be perfect with height or width to 1"
-            )
-
+        except InvalidConfigException as e:
+            raise ParseError(f"{e}")
         return self
 
 

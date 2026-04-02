@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "mazegen"
 version = "1.0.0"
-packages = [{ include = "mazegen" }]
+packages = [{ include = "mazegen" }, {include = "shared"}]
 
 [[tool.mypy.overrides]]
 module = ["mlx.*", "sortedcontainers.*", "pynput.*"]

@@ -30,7 +30,7 @@ def main(filename: str) -> None:
             infos.height,
             Vec2(infos.entry[0], infos.entry[1]),
             Vec2(infos.exit[0], infos.exit[1]),
-            seed=infos.seed if infos.seed != "[RANDOM]" else None,
+            seed=infos.seed,
             output_file=infos.output_file,
             is_perfect=infos.perfect,
             locked_cells=[

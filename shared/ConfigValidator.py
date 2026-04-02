@@ -1,6 +1,6 @@
 from typing import Optional
-from mazegen import Vec2
-from shared import InvalidConfigException
+from mazegen.Vec2 import Vec2
+from shared.InvalidConfigException import InvalidConfigException
 
 
 class ConfigValidator:
@@ -73,7 +73,7 @@ class ConfigValidator:
             raise InvalidConfigException(
                 "Output file must be a string"
             )
-        if not len(output_file):
+        if not len(output_file.strip()):
             raise InvalidConfigException(
                 "Output file cannot be an empty string"
             )

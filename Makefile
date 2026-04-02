@@ -10,7 +10,7 @@ CONFIG      ?= ./config.txt
 $(VENV):
 	python3 -m venv $(VENV)
 
-$(MAZEGEN): $(VENV)
+$(MAZEGEN):$(POETRY)
 	$(PIP) install build
 	$(PYTHON) -m build --wheel --outdir .
 
@@ -28,10 +28,10 @@ install: $(POETRY)
 	$(POETRY) install
 
 run: install
-	$(POETRY) run python $(SRC)/main.py $(CONFIG)
+	$(POETRY) run python $(SRC)/a_maze_ing.py $(CONFIG)
 
 debug: install
-	$(POETRY) run python -m pdb $(SRC)/main.py $(CONFIG)
+	$(POETRY) run python -m pdb $(SRC)/a_maze_ing.py $(CONFIG)
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +
