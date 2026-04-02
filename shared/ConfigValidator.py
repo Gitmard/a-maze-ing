@@ -62,9 +62,9 @@ class ConfigValidator:
 
     @staticmethod
     def __validate_perfect(perfect: bool) -> None:
-        if not isinstance(perfect, bool):
+        if type(perfect) is not bool:
             raise InvalidConfigException(
-                "Perfect must be a bolean"
+                "Perfect must be a boolean"
             )
 
     @staticmethod
