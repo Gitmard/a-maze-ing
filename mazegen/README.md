@@ -31,14 +31,20 @@ print(generator.get_solution())  # [(0,0), (1,0), ..., (29,19)]
 The only concrete generator provided by this package. Extends `MazeGenerator`.
 ```python
 DepthFirstSearchGenerator(
-    width: int,
-    height: int,
-    start_pos: Vec2,
-    end_pos: Vec2,
-    seed: str | None = None,        # RNG seed for reproducible generation
-    add_ft_pattern: bool = False,   # Lock cells forming a "42" at the center
-    is_perfect: bool = True,        # Enforce a single path between entry and exit
-    output_file: str = "output_maze.txt",
+	width=30,
+	height=20,
+	start_pos=Vec2(0, 0),
+	end_post=Vec2(29, 19),
+	seed="my_seed!!",
+	output_file="output_maze.txt",
+	is_perfect=True,
+	locked_cells=[
+		[1, 0, 0, 0, 1, 1, 1],
+		[1, 0, 0, 0, 0, 0, 1],
+		[1, 1, 1, 0, 1, 1, 1],
+		[0, 0, 1, 0, 1, 0, 0],
+		[0, 0, 1, 0, 1, 1, 1],
+	]  # Optional: Add obstacles in the maze
 )
 ```
 

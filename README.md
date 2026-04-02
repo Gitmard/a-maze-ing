@@ -99,13 +99,13 @@ python -m build
 from mazegen import DepthFirstSearchGenerator, MazeGenerator, Vec2, GeneratorException
 
 generator = DepthFirstSearchGenerator(
-	infos.width,
-	infos.height,
-	Vec2(infos.entry[0], infos.entry[1]),
-	Vec2(infos.exit[0], infos.exit[1]),
-	seed=infos.seed if infos.seed != "[RANDOM]" else None,
-	output_file=infos.output_file,
-	is_perfect=infos.perfect,
+	width=30,
+	height=20,
+	start_pos=Vec2(0, 0),
+	end_post=Vec2(29, 19),
+	seed="my_seed!!",
+	output_file="output_maze.txt",
+	is_perfect=True,
 	locked_cells=[
 		[1, 0, 0, 0, 1, 1, 1],
 		[1, 0, 0, 0, 0, 0, 1],
