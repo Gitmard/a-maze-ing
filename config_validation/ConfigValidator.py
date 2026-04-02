@@ -1,6 +1,6 @@
 from typing import Optional
 from mazegen.Vec2 import Vec2
-from shared.InvalidConfigException import InvalidConfigException
+from config_validation.InvalidConfigException import InvalidConfigException
 
 
 class ConfigValidator:

@@ -10,7 +10,7 @@ from mazegen import Vec2
 from pydantic import BaseModel, Field, model_validator
 from time import time
 
-from shared import ConfigValidator, InvalidConfigException
+from config_validation import ConfigValidator, InvalidConfigException
 
 
 class ParseError(Exception):

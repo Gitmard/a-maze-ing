@@ -5,7 +5,7 @@ from mazegen.Maze import Coord, Maze
 from typing import Literal, Optional, Union, List
 from abc import ABC, abstractmethod
 from random import Random
-from shared import ConfigValidator
+from config_validation import ConfigValidator
 
 
 class MazeGenerator(ABC):
