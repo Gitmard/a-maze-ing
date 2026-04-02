@@ -45,19 +45,19 @@ class ConfigValidator:
             )
         if not (0 <= entry.x < width):
             raise InvalidConfigException(
-                "Entry.x must be <= 0 and < width"
+                f"Entry.x must be >= 0 and < width (got {entry.x}, width={width})"
             )
         if not (0 <= exit.x < width):
             raise InvalidConfigException(
-                "Exit.x must be <= 0 and < width"
+                f"Exit.x must be >= 0 and < width (got {exit.x}, width={width})"
             )
         if not (0 <= entry.y < height):
             raise InvalidConfigException(
-                "Entry.y must be <= 0 and < height"
+                f"Entry.y must be >= 0 and < height (got {entry.y}, height={height})"
             )
         if not (0 <= exit.y < height):
             raise InvalidConfigException(
-                "Exit.y must be <= 0 and < height"
+                f"Exit.y must be >= 0 and < height (got {exit.y}, height={height})"
             )
 
     @staticmethod
