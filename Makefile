@@ -10,7 +10,7 @@ CONFIG      ?= ./config.txt
 $(VENV):
 	python3 -m venv $(VENV)
 
-$(MAZEGEN):$(POETRY)
+$(MAZEGEN): $(VENV)
 	$(PIP) install build
 	$(PYTHON) -m build --wheel --outdir .
 
@@ -20,9 +20,9 @@ $(POETRY): $(VENV) $(MAZEGEN)
 	$(PIP) install $(MAZEGEN)
 	$(PIP) install poetry
 
-.PHONY: install run debug clean lint lint-strict
+.PHONY: install run debug clean lint lint-strict re
 
-build-mazegen: $(MAZEGEN)
+build-mazegen: $(POETRY)
 
 install: $(POETRY)
 	$(POETRY) install
@@ -39,6 +39,7 @@ clean:
 
 fclean: clean
 	rm -rf $(VENV)
+	rm -rf $(MAZEGEN)
 
 lint: install
 	$(POETRY) run flake8 . --exclude=.venv
@@ -47,3 +48,5 @@ lint: install
 lint-strict: install
 	$(POETRY) run mypy . --exclude .venv --strict
 	$(POETRY) run flake8 . --exclude=.venv
+
+re: fclean install
