@@ -58,7 +58,7 @@ class Parsed(BaseModel):
                 seed=self.seed
             )
         except InvalidConfigException as e:
-            raise ParseError(f"{e}")
+            raise ParseError(str(e)) from e
         return self
 
 
