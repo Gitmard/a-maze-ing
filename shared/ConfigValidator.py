@@ -79,7 +79,7 @@ class ConfigValidator:
             )
 
     @staticmethod
-    def __validate_seed(seed: Optional[str]):
+    def __validate_seed(seed: Optional[str]) -> None:
         if seed is not None and not isinstance(seed, str):
             raise InvalidConfigException(
                 "Seed must be None or a string"
@@ -99,7 +99,7 @@ class ConfigValidator:
         perfect: bool,
         output_file: str,
         seed: Optional[str]
-    ) -> bool:
+    ) -> None:
         cls.__validate_maze_dimensions(height, width)
         cls.__validate_entry_exit(entry, exit, height, width)
         cls.__validate_perfect(perfect)
