@@ -100,8 +100,14 @@ class ConfigValidator:
         output_file: str,
         seed: Optional[str]
     ) -> None:
-        cls.__validate_maze_dimensions(height, width)
-        cls.__validate_entry_exit(entry, exit, height, width)
+        cls.__validate_maze_dimensions(
+            height=height,
+            width=width)
+        cls.__validate_entry_exit(
+            entry=entry,
+            exit=exit,
+            height=height,
+            width=width)
         cls.__validate_perfect(perfect)
         cls.__validate_output_file(output_file)
         cls.__validate_seed(seed)
