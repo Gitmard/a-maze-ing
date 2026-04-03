@@ -96,7 +96,8 @@ python -m build
 ### Usage example
 
 ```python
-from mazegen import DepthFirstSearchGenerator, MazeGenerator, Vec2, GeneratorException
+from mazegen import DepthFirstSearchGenerator, MazeGenerator, Vec2
+from mazegen.GeneratorException import GeneratorException
 
 generator = DepthFirstSearchGenerator(
 	width=30,
