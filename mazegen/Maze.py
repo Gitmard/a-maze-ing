@@ -233,7 +233,10 @@ class Maze:
         found: Coord = start
 
         while pq:
-            _, path, curr = pq.pop()
+            curr_cost, path, curr = pq.pop()
+
+            if curr_cost > best_cost[curr]:
+                continue
 
             x, y = curr
             curr_cell: Cell = self.map[y][x]
@@ -258,6 +261,7 @@ class Maze:
                         continue
 
                 best_cost[neighbour] = path + 1 + dist
+                prev[neighbour] = curr
 
                 pq.add(
                     (
@@ -266,9 +270,6 @@ class Maze:
                         neighbour,
                     )
                 )
-
-                if neighbour not in prev:
-                    prev[neighbour] = curr
 
         self.solution = []
         cursor: Coord = found
