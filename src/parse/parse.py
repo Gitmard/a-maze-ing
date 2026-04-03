@@ -181,7 +181,7 @@ def parse(filename: str) -> Parsed:
     with open(filename) as f:
         try:
             for raw_line in f:
-                line = raw_line.strip("\n")
+                line = raw_line.strip()
 
                 if line.startswith("#") or len(line) == 0:
                     continue
