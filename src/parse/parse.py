@@ -191,13 +191,13 @@ def parse(filename: str) -> Parsed:
 
                 key, value = line.split("=", maxsplit=1)
 
-                if key.lower() not in VALID_KEYS:
+                if key.upper() not in VALID_KEYS:
                     raise ParseError(f"Key is invalid ({key})")
 
-                if key in values:
+                if key.lower() in values:
                     raise ParseError(f"Key defines multiple times ({key})")
 
-                values[key.lower()] = FUNCTION_FOR_KEY[key](value)
+                values[key.lower()] = FUNCTION_FOR_KEY[key.upper()](value)
         except ValueError as err:
             raise ParseError(f"{err}")
 
