@@ -4,7 +4,6 @@ PYTHON      := $(VENV)/bin/python
 PIP         := $(VENV)/bin/pip
 MAZEGEN		:= ./mazegen-1.0.0-py3-none-any.whl
 MLX			:= ./mlx/mlx-2.2-py3-none-any.whl
-SRC         := ./src
 CONFIG      ?= ./config.txt
 
 $(VENV):
@@ -28,10 +27,10 @@ install: $(POETRY)
 	$(POETRY) install
 
 run: install
-	$(POETRY) run python $(SRC)/a_maze_ing.py $(CONFIG)
+	$(POETRY) run python ./a_maze_ing.py $(CONFIG)
 
 debug: install
-	$(POETRY) run python -m pdb $(SRC)/a_maze_ing.py $(CONFIG)
+	$(POETRY) run python -m pdb ./a_maze_ing.py $(CONFIG)
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +

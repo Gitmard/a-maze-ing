@@ -2,8 +2,8 @@
 
 from mazegen import DepthFirstSearchGenerator, Vec2
 from mazegen.GeneratorException import GeneratorException
-from parse import parse, Parsed, ParseError
-from visualizer import visualize
+from src.parse import parse, Parsed, ParseError
+from src.visualizer import visualize
 from pydantic import ValidationError
 import sys
 
@@ -54,7 +54,16 @@ def main(filename: str) -> None:
 
 if __name__ == "__main__":
     try:
+        if len(sys.argv) != 2:
+            print(
+                "Usage: python3 a_maze_ing.py [config_file] /",
+                "make run /",
+                "make run CONFIG=[config_file]"
+            )
+            sys.exit(1)
+
         main(sys.argv[1])
+
     except Exception as e:
         print(f"an unexpected exception occured ({e})")
         sys.exit(1)

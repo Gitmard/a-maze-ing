@@ -129,6 +129,11 @@ class Maze:
                             "Entry or exit cannot be in the locked" +
                             " cells pattern"
                         )
+        else:
+            print(
+                "Cannot place the 42 pattern,",
+                "will generate the maze without it."
+            )
 
     def carve_cell(self, cell: Cell, directions: int) -> None:
         """Remove walls between a cell and its neighbours
@@ -223,7 +228,7 @@ class Maze:
         found: Coord = start
 
         while pq:
-            _, path, curr = pq.pop(0)
+            _, path, curr = pq.pop()
             x, y = curr
             curr_cell: Cell = self.map[y][x]
 
@@ -249,7 +254,7 @@ class Maze:
 
                 pq.add(
                     (
-                        -path - 1 - dist,
+                        path + 1 + dist,
                         path + 1,
                         neighbour,
                     )
