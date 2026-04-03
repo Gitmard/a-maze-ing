@@ -5,7 +5,7 @@ from mazegen.GeneratorException import GeneratorException
 from mazegen.Vec2 import Vec2
 from mazegen.EDirection import EDirection
 from enum import IntEnum, auto
-from typing import Dict, List, Literal, Optional, Set, Tuple
+from typing import Dict, List, Literal, Optional, Tuple
 from sortedcontainers import SortedKeyList
 
 Coord = Tuple[int, int]

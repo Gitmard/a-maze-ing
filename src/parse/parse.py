@@ -205,6 +205,8 @@ def parse(filename: str) -> Parsed:
         raise ParseError(f"Missing key output_file in {filename}")
     if values.get("width") is None:
         raise ParseError(f"Missing key width in {filename}")
+    if values.get("perfect") is None:
+        raise ParseError(f"Missing key perfect in {filename}")
     if values.get("seed") == "" or values.get("seed") is None:
         print("WARNING: You forgot to set the seed, generating one for you...")
         curr_time = int(time())

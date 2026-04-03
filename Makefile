@@ -38,7 +38,6 @@ clean:
 
 fclean: clean
 	rm -rf $(VENV)
-	rm -rf $(MAZEGEN)
 
 lint: install
 	$(POETRY) run flake8 . --exclude=.venv

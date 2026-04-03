@@ -5,6 +5,7 @@ __all__ = [
     "DepthFirstSearchGenerator",
     "Maze",
     "Vec2",
+    "GeneratorException"
 ]
 
 from .MazeGenerator import MazeGenerator
