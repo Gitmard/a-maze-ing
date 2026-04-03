@@ -117,11 +117,11 @@ generator = DepthFirstSearchGenerator(
 )
 
 try:
-    generator.generate()               # Run the DFS algorithm
-    generator.get_maze().solve()       # Compute the shortest path with A*
-    generator.write_output_file()      # Write the output file
+    generator.generate()                 # Run the DFS algorithm
+    generator.get_maze().solve()         # Compute the shortest path with A*
+    generator.write_output_file()        # Write the output file
 
-    maze = generator.get_maze()        # Access the Maze object
+    maze = generator.get_maze()          # Access the Maze object
     solution = generator.get_solution()  # List of (x, y) coords from entry to exit
 except GeneratorException as e:
     print("Generation failed:", e)
