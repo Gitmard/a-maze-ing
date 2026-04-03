@@ -7,7 +7,7 @@ class ConfigValidator:
     """Validate maze configuration parameters before generation."""
 
     @staticmethod
-    def __validate_maze_dimensions(height: int, width: int) -> None:
+    def __validate_maze_dimensions(height: int, width: int, perfect: bool) -> None:
         """Validate that height and width are positive integers.
 
         Args:
@@ -25,6 +25,10 @@ class ConfigValidator:
         if not isinstance(width, int):
             raise InvalidConfigException(
                 "Width must be an integer"
+            )
+        if not perfect and min(height, width) <= 1:
+            raise InvalidConfigException(
+                "Cannot generate an imperfect maze with width or height = 1"
             )
         if height < 1:
             raise InvalidConfigException(
@@ -165,7 +169,8 @@ class ConfigValidator:
         """
         cls.__validate_maze_dimensions(
             height=height,
-            width=width
+            width=width,
+            perfect=perfect
         )
         cls.__validate_entry_exit(
             entry=entry,

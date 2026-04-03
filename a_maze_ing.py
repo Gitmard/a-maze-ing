@@ -19,15 +19,15 @@ def main(filename: str) -> None:
 
     except ValidationError as e:
         print(e.errors()[0]["msg"])
-        return
+        sys.exit(1)
 
     except ParseError as e:
         print(e)
-        return
+        sys.exit(1)
 
     except OSError as e:
         print(e)
-        return
+        sys.exit(1)
 
     try:
         generator = DepthFirstSearchGenerator(
@@ -49,7 +49,7 @@ def main(filename: str) -> None:
 
     except GeneratorException as e:
         print(f"An error occured during maze generation ({e})")
-        return
+        sys.exit(1)
     try:
         visualize(generator)
 
