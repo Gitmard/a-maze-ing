@@ -9,6 +9,11 @@ import sys
 
 
 def main(filename: str) -> None:
+    """Parse the configuration file, generate a maze and launch the visualizer.
+
+    Args:
+        filename: Path to the configuration file to parse.
+    """
     try:
         infos: Parsed = parse(filename)
 

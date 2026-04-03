@@ -21,6 +21,12 @@ class ParseError(Exception):
     """
 
     def __init__(self, msg: str = "Not specified") -> None:
+        """Initialize with a prefixed error message.
+
+        Args:
+            msg: Description of the parse error.
+                Defaults to ``"Not specified"``.
+        """
         super().__init__(f"ParseError: {msg}")
 
 
@@ -47,6 +53,18 @@ class Parsed(BaseModel):
 
     @model_validator(mode="after")
     def validate_coords(self) -> "Parsed":
+        """Validate entry/exit coordinates against maze dimensions.
+
+        Delegates to :class:`ConfigValidator` and converts any
+        :class:`InvalidConfigException` into a ``ValueError``
+        for Pydantic.
+
+        Returns:
+            The validated model instance.
+
+        Raises:
+            ValueError: If the coordinates are invalid.
+        """
         try:
             ConfigValidator.validate(
                 height=self.height,
