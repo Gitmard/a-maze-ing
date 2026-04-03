@@ -191,25 +191,15 @@ def parse(filename: str) -> Parsed:
 
                 key, value = line.split("=", maxsplit=1)
 
-                if key not in VALID_KEYS:
+                if key.upper() not in VALID_KEYS:
                     raise ParseError(f"Key is invalid ({key})")
 
-                if key in values:
+                if key.lower() in values:
                     raise ParseError(f"Key defines multiple times ({key})")
 
-                values[key.lower()] = FUNCTION_FOR_KEY[key](value)
+                values[key.lower()] = FUNCTION_FOR_KEY[key.upper()](value)
         except ValueError as err:
             raise ParseError(f"{err}")
-
-    typed: ParsedDict = {
-        "width": cast(int, values.get("width")),
-        "height": cast(int, values.get("height")),
-        "entry": cast(Tuple[int, int], values.get("entry")),
-        "exit": cast(Tuple[int, int], values.get("exit")),
-        "output_file": cast(str, values.get("output_file")),
-        "perfect": cast(bool, values.get("perfect")),
-        "seed": cast(str, values.get("seed"))
-    }
 
     if values.get("width") is None:
         raise ParseError(f"Missing key width in {filename}")
@@ -231,5 +221,15 @@ def parse(filename: str) -> Parsed:
         random_seed = f"{curr_time}"
         print(f"Using {random_seed} as a seed")
         values["seed"] = random_seed
+
+    typed: ParsedDict = {
+        "width": cast(int, values.get("width")),
+        "height": cast(int, values.get("height")),
+        "entry": cast(Tuple[int, int], values.get("entry")),
+        "exit": cast(Tuple[int, int], values.get("exit")),
+        "output_file": cast(str, values.get("output_file")),
+        "perfect": cast(bool, values.get("perfect")),
+        "seed": cast(str, values.get("seed"))
+    }
 
     return Parsed(**typed)
