@@ -20,18 +20,18 @@ $(POETRY): $(VENV) $(MAZEGEN)
 	$(PIP) install $(MAZEGEN)
 	$(PIP) install poetry
 
-.PHONY: install run debug clean lint lint-strict
+.PHONY: install run debug clean lint lint-strict re
 
-build-mazegen: $(MAZEGEN)
+build-mazegen: $(POETRY)
 
 install: $(POETRY)
 	$(POETRY) install
 
 run: install
-	$(POETRY) run python $(SRC)/main.py $(CONFIG)
+	$(POETRY) run python $(SRC)/a_maze_ing.py $(CONFIG)
 
 debug: install
-	$(POETRY) run python -m pdb $(SRC)/main.py $(CONFIG)
+	$(POETRY) run python -m pdb $(SRC)/a_maze_ing.py $(CONFIG)
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +
@@ -39,6 +39,7 @@ clean:
 
 fclean: clean
 	rm -rf $(VENV)
+	rm -rf $(MAZEGEN)
 
 lint: install
 	$(POETRY) run flake8 . --exclude=.venv
@@ -47,3 +48,5 @@ lint: install
 lint-strict: install
 	$(POETRY) run mypy . --exclude .venv --strict
 	$(POETRY) run flake8 . --exclude=.venv
+
+re: fclean install

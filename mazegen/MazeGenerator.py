@@ -5,6 +5,7 @@ from mazegen.Maze import Coord, Maze
 from typing import Literal, Optional, Union, List
 from abc import ABC, abstractmethod
 from random import Random
+from config_validation import ConfigValidator
 
 
 class MazeGenerator(ABC):
@@ -49,6 +50,15 @@ class MazeGenerator(ABC):
             is_perfect: Whether the maze should be perfect.
             output_file: Path to the file where the maze will be written.
         """
+        ConfigValidator.validate(
+            height=height,
+            width=width,
+            entry=start_pos,
+            exit=end_pos,
+            seed=seed,
+            perfect=is_perfect,
+            output_file=output_file
+        )
         self.__seed = seed
         self.__rng = Random(seed)
         self.__maze = Maze()

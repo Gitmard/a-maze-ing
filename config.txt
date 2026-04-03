@@ -3,5 +3,5 @@ HEIGHT=100
 ENTRY=0,0
 EXIT=99,99
 PERFECT=True
-OUTPUT_FILE=maze_output.txt
+OUTPUT_FILE=output_maze.txt
 SEED=ft_amazing_seed
