@@ -7,7 +7,7 @@
 
 A-maze-ing is part of the common core curriculum. Its goal is to provide an introduction to graphical programming and maze generation algorithms.
 
-The program reads a configuration file, generates a maze, displays it visually in the terminal, and writes the result to an output file. The maze generation logic is packaged as a standalone, reusable Python module (`mazegen`) intended to be reused in a later project — PacMan — where students will build a clone of the classic arcade game.
+The program reads a configuration file, generates a maze, displays it visually in the terminal, and writes the result to an output file. The maze generation logic is packaged as a standalone, reusable Python module (`mazegen`) intended to be reused in a later project - PacMan - where students will build a clone of the classic arcade game.
 
 ## Instructions
 
@@ -61,7 +61,7 @@ The maze is initialized with every cell fully enclosed (all 4 walls present). DF
 
 DFS was chosen because it handles **locked-cell obstacles** (the 42 pattern) naturally: when picking a direction to expand, locked cells are simply excluded from the candidates. The algorithm routes around them without any special casing. This is a key requirement of the project.
 
-We originally attempted to use Recursive Division, but that algorithm builds walls top-down rather than carving passages — making it fundamentally incompatible with pre-locked cells. Switching to DFS resolved this entirely.
+We originally attempted to use Recursive Division, but that algorithm builds walls top-down rather than carving passages - making it fundamentally incompatible with pre-locked cells. Switching to DFS resolved this entirely.
 
 ## Reusability
 
@@ -129,20 +129,20 @@ except GeneratorException as e:
 
 ## Resources
 
-No external resources were used for this project — we already knew the DFS algorithm and implemented it from scratch.
+No external resources were used for this project - we already knew the DFS algorithm and implemented it from scratch.
 
 ### Reference material
 
-- [Maze generation algorithms — Wikipedia](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
-- [Depth-first search — Wikipedia](https://en.wikipedia.org/wiki/Depth-first_search)
-- [A* search algorithm — Wikipedia](https://en.wikipedia.org/wiki/A*_search_algorithm)
+- [Maze generation algorithms - Wikipedia](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
+- [Depth-first search - Wikipedia](https://en.wikipedia.org/wiki/Depth-first_search)
+- [A* search algorithm - Wikipedia](https://en.wikipedia.org/wiki/A*_search_algorithm)
 - [Python `heapq` documentation](https://docs.python.org/3/library/heapq.html)
 
 ### AI use
 
 AI tools were used in the following ways:
-- **GitHub Copilot** — pull request reviews throughout the project
-- **Claude (Anthropic)** — development aid: architecture discussion, debugging, and docstring writing
+- **GitHub Copilot** - pull request reviews throughout the project
+- **Claude (Anthropic)** - development aid: architecture discussion, debugging, and docstring writing
 
 No AI-generated code was submitted as part of this project.
 
@@ -157,10 +157,10 @@ No AI-generated code was submitted as part of this project.
 
 ### Planning
 
-We started the project aiming to implement Recursive Division. After significant development work, we discovered it is incompatible with pre-locked obstacle cells — the algorithm assumes a fully open grid to subdivide. We pivoted to DFS, which solved the problem cleanly.
+We started the project aiming to implement Recursive Division. After significant development work, we discovered it is incompatible with pre-locked obstacle cells - the algorithm assumes a fully open grid to subdivide. We pivoted to DFS, which solved the problem cleanly.
 
 ### Retrospective
 
-**What went well:** DFS turned out to be a better fit than expected. Its elegance with locked cells meant very little extra logic was needed to support the 42 pattern. The separation between the `mazegen` module and the visualizer also paid off — each part could be developed and tested independently.
+**What went well:** DFS turned out to be a better fit than expected. Its elegance with locked cells meant very little extra logic was needed to support the 42 pattern. The separation between the `mazegen` module and the visualizer also paid off - each part could be developed and tested independently.
 
 **What could be improved:** A more thorough planning phase would have prevented the algorithm switch. Evaluating algorithm constraints against project requirements before writing any code is the main lesson taken from this project.
