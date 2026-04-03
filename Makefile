@@ -44,8 +44,8 @@ lint: install
 	$(POETRY) run mypy . --exclude .venv --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
 lint-strict: install
-	$(POETRY) run mypy . --exclude .venv --strict
 	$(POETRY) run flake8 . --exclude=.venv
+	$(POETRY) run mypy . --exclude .venv --strict
 
 re:
 	make fclean
