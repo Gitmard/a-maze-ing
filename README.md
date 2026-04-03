@@ -71,13 +71,13 @@ The maze generation logic is packaged as a standalone Python module: `mazegen`. 
 
 ```
 mazegen
-├── Cell.py                     # Maze cell with bitmask wall representation
+├── Cell.py                      # Maze cell with bitmask wall representation
 ├── DepthFirstSearchGenerator.py # DFS algorithm implementation
-├── EDirection.py               # Cardinal directions as IntFlag bitmask
-├── GeneratorException.py       # Custom exception
-├── MazeGenerator.py            # Abstract base class
-├── Maze.py                     # 2D grid + A* solver
-└── Vec2.py                     # 2D integer coordinate dataclass
+├── EDirection.py                # Cardinal directions as IntFlag bitmask
+├── GeneratorException.py        # Custom exception
+├── MazeGenerator.py             # Abstract base class
+├── Maze.py                      # 2D grid + A* solver
+└── Vec2.py                      # 2D integer coordinate dataclass
 ```
 
 ### Installation
