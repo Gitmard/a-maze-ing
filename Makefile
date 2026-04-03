@@ -47,4 +47,7 @@ lint-strict: install
 	$(POETRY) run mypy . --exclude .venv --strict
 	$(POETRY) run flake8 . --exclude=.venv
 
-re: fclean install
+re:
+	make fclean
+	rm -rf $(MAZEGEN)
+	make install
