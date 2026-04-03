@@ -15,13 +15,13 @@ class ConfigValidator:
             raise InvalidConfigException(
                 "Width must be an integer"
             )
-        if height <= 1:
+        if height < 1:
             raise InvalidConfigException(
-                "Height must be > 1"
+                "Height must be >= 1"
             )
-        if width <= 1:
+        if width < 1:
             raise InvalidConfigException(
-                "Width must be > 1"
+                "Width must be >= 1"
             )
 
     @staticmethod
