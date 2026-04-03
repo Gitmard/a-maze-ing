@@ -7,7 +7,11 @@ class ConfigValidator:
     """Validate maze configuration parameters before generation."""
 
     @staticmethod
-    def __validate_maze_dimensions(height: int, width: int, perfect: bool) -> None:
+    def __validate_maze_dimensions(
+        height: int,
+        width: int,
+        perfect: bool
+    ) -> None:
         """Validate that height and width are positive integers.
 
         Args:
