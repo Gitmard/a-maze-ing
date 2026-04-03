@@ -124,8 +124,8 @@ class MazeGenerator(ABC):
                 output += digit
             output += "\n"
         output += "\n"
-        output += f"{self.__start_pos.x}, {self.__start_pos.y}\n"
-        output += f"{self.__end_pos.x}, {self.__end_pos.y}\n"
+        output += f"{self.__start_pos.x},{self.__start_pos.y}\n"
+        output += f"{self.__end_pos.x},{self.__end_pos.y}\n"
         solution_coords = [(self.__start_pos.x, self.__start_pos.y)] + \
             self.get_solution()
         solutions_moves = ""

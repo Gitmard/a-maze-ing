@@ -1,7 +1,7 @@
-WIDTH=5
-HEIGHT=5
+WIDTH=25
+HEIGHT=25
 ENTRY=0,0
-EXIT=4,4
+EXIT=24,24
 PERFECT=False
 OUTPUT_FILE=output_maze.txt
 SEED=ft_amazing_seed

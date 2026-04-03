@@ -204,12 +204,18 @@ class Maze:
         start: Coord = (self.start_pos.x, self.start_pos.y)
         end: Coord = (self.end_pos.x, self.end_pos.y)
 
+        start_dist = abs(self.end_pos.x - self.start_pos.x) + \
+            abs(self.end_pos.y - self.start_pos.y)
+
         pq: SortedKeyList[Tuple[int, int, Coord], int] = SortedKeyList(
-            [(0, 0, start)],
+            [(start_dist, 0, start)],
             key=lambda item: -item[0],
         )
 
         prev: Dict[Coord, Coord] = {}
+
+        best_cost = {start: start_dist}
+
         directions: List[EDirection] = [
             EDirection.NORTH,
             EDirection.EAST,
@@ -224,11 +230,11 @@ class Maze:
             EDirection.WEST: (-1, 0),
         }
 
-        explored: Set[Coord] = {start}
         found: Coord = start
 
         while pq:
             _, path, curr = pq.pop()
+
             x, y = curr
             curr_cell: Cell = self.map[y][x]
 
@@ -243,14 +249,15 @@ class Maze:
                 move_x, move_y = moves[direction]
                 neighbour: Coord = (x + move_x, y + move_y)
 
-                if neighbour in explored:
-                    continue
-
-                explored.add(neighbour)
-
                 dist: int = abs(self.end_pos.x - neighbour[0]) + abs(
                     self.end_pos.y - neighbour[1]
                 )
+
+                if neighbour in best_cost:
+                    if best_cost[neighbour] <= path + 1 + dist:
+                        continue
+
+                best_cost[neighbour] = path + 1 + dist
 
                 pq.add(
                     (

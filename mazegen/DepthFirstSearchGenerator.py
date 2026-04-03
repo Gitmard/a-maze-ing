@@ -358,7 +358,7 @@ class DepthFirstSearchGenerator(MazeGenerator):
                             curr_cell.position.x + 1
                         ]
                     )
-                if direction == EDirection.SOUTH:
+                elif direction == EDirection.SOUTH:
                     stack.append(
                         self.get_maze().map[curr_cell.position.y + 1][
                             curr_cell.position.x
@@ -369,7 +369,7 @@ class DepthFirstSearchGenerator(MazeGenerator):
                             curr_cell.position.x
                         ]
                     )
-                if direction == EDirection.WEST:
+                elif direction == EDirection.WEST:
                     stack.append(
                         self.get_maze().map[curr_cell.position.y][
                             curr_cell.position.x - 1

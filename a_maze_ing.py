@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from mazegen import DepthFirstSearchGenerator, Vec2
-from mazegen.GeneratorException import GeneratorException
+from mazegen import GeneratorException
 from src.parse import parse, Parsed, ParseError
 from src.visualizer import visualize
 from pydantic import ValidationError

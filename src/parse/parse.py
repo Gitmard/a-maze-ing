@@ -58,7 +58,6 @@ class Parsed(BaseModel):
                 seed=self.seed
             )
         except InvalidConfigException as e:
-            # Re-raise as ValueError so Pydantic wraps this into a ValidationError.
             raise ValueError(str(e)) from e
         return self
 
