@@ -5,7 +5,7 @@ from mazegen.GeneratorException import GeneratorException
 from mazegen.Vec2 import Vec2
 from mazegen.EDirection import EDirection
 from enum import IntEnum, auto
-from typing import Dict, List, Literal, Optional, Set, Tuple
+from typing import Dict, List, Literal, Optional, Tuple
 from sortedcontainers import SortedKeyList
 
 Coord = Tuple[int, int]
@@ -129,6 +129,11 @@ class Maze:
                             "Entry or exit cannot be in the locked" +
                             " cells pattern"
                         )
+        else:
+            print(
+                "Cannot place the 42 pattern,",
+                "will generate the maze without it."
+            )
 
     def carve_cell(self, cell: Cell, directions: int) -> None:
         """Remove walls between a cell and its neighbours
@@ -199,12 +204,18 @@ class Maze:
         start: Coord = (self.start_pos.x, self.start_pos.y)
         end: Coord = (self.end_pos.x, self.end_pos.y)
 
+        start_dist = abs(self.end_pos.x - self.start_pos.x) + \
+            abs(self.end_pos.y - self.start_pos.y)
+
         pq: SortedKeyList[Tuple[int, int, Coord], int] = SortedKeyList(
-            [(0, 0, start)],
+            [(start_dist, 0, start)],
             key=lambda item: -item[0],
         )
 
         prev: Dict[Coord, Coord] = {}
+
+        best_cost = {start: start_dist}
+
         directions: List[EDirection] = [
             EDirection.NORTH,
             EDirection.EAST,
@@ -219,11 +230,14 @@ class Maze:
             EDirection.WEST: (-1, 0),
         }
 
-        explored: Set[Coord] = {start}
         found: Coord = start
 
         while pq:
-            _, path, curr = pq.pop(0)
+            curr_cost, path, curr = pq.pop()
+
+            if curr_cost > best_cost[curr]:
+                continue
+
             x, y = curr
             curr_cell: Cell = self.map[y][x]
 
@@ -238,25 +252,24 @@ class Maze:
                 move_x, move_y = moves[direction]
                 neighbour: Coord = (x + move_x, y + move_y)
 
-                if neighbour in explored:
-                    continue
-
-                explored.add(neighbour)
-
                 dist: int = abs(self.end_pos.x - neighbour[0]) + abs(
                     self.end_pos.y - neighbour[1]
                 )
 
+                if neighbour in best_cost:
+                    if best_cost[neighbour] <= path + 1 + dist:
+                        continue
+
+                best_cost[neighbour] = path + 1 + dist
+                prev[neighbour] = curr
+
                 pq.add(
                     (
-                        -path - 1 - dist,
+                        path + 1 + dist,
                         path + 1,
                         neighbour,
                     )
                 )
-
-                if neighbour not in prev:
-                    prev[neighbour] = curr
 
         self.solution = []
         cursor: Coord = found

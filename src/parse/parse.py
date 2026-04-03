@@ -21,6 +21,12 @@ class ParseError(Exception):
     """
 
     def __init__(self, msg: str = "Not specified") -> None:
+        """Initialize with a prefixed error message.
+
+        Args:
+            msg: Description of the parse error.
+                Defaults to ``"Not specified"``.
+        """
         super().__init__(f"ParseError: {msg}")
 
 
@@ -47,6 +53,18 @@ class Parsed(BaseModel):
 
     @model_validator(mode="after")
     def validate_coords(self) -> "Parsed":
+        """Validate entry/exit coordinates against maze dimensions.
+
+        Delegates to :class:`ConfigValidator` and converts any
+        :class:`InvalidConfigException` into a ``ValueError``
+        for Pydantic.
+
+        Returns:
+            The validated model instance.
+
+        Raises:
+            ValueError: If the coordinates are invalid.
+        """
         try:
             ConfigValidator.validate(
                 height=self.height,
@@ -58,7 +76,6 @@ class Parsed(BaseModel):
                 seed=self.seed
             )
         except InvalidConfigException as e:
-            # Re-raise as ValueError so Pydantic wraps this into a ValidationError.
             raise ValueError(str(e)) from e
         return self
 
@@ -164,7 +181,7 @@ def parse(filename: str) -> Parsed:
     with open(filename) as f:
         try:
             for raw_line in f:
-                line = raw_line.strip("\n")
+                line = raw_line.strip()
 
                 if line.startswith("#") or len(line) == 0:
                     continue
@@ -206,6 +223,8 @@ def parse(filename: str) -> Parsed:
         raise ParseError(f"Missing key output_file in {filename}")
     if values.get("width") is None:
         raise ParseError(f"Missing key width in {filename}")
+    if values.get("perfect") is None:
+        raise ParseError(f"Missing key perfect in {filename}")
     if values.get("seed") == "" or values.get("seed") is None:
         print("WARNING: You forgot to set the seed, generating one for you...")
         curr_time = int(time())

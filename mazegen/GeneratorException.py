@@ -7,4 +7,10 @@ class GeneratorException(Exception):
     """
 
     def __init__(self, msg: str = "Not specified"):
+        """Initialize with a prefixed error message.
+
+        Args:
+            msg: Description of the generator error.
+                Defaults to ``"Not specified"``.
+        """
         super().__init__(f"GeneratorError: {msg}")

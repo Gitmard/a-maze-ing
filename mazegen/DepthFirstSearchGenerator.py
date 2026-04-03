@@ -7,10 +7,31 @@ from sortedcontainers import SortedKeyList
 
 
 class DepthFirstSearchGenerator(MazeGenerator):
+    """Maze generator using a randomised depth-first search algorithm.
+
+    Extends :class:`MazeGenerator` by carving passages with an
+    iterative DFS approach backed by an explicit stack. Optionally
+    breaks extra walls to produce an imperfect maze.
+    """
 
     def get_random_direction(
         self, curr_cell: Cell, visited_cells: Set[Cell]
     ) -> Optional[EDirection]:
+        """Pick a random unvisited, unlocked neighbour direction.
+
+        Examines all four cardinal neighbours of *curr_cell* and
+        collects the directions whose target cell is within bounds,
+        not locked, and not already in *visited_cells*.  One of
+        those directions is then chosen uniformly at random.
+
+        Args:
+            curr_cell: The cell to look around from.
+            visited_cells: Set of cells already visited by the DFS.
+
+        Returns:
+            A random valid ``EDirection``, or ``None`` if every
+            neighbour has been visited or is locked.
+        """
         avaiable_directions: List[EDirection] = []
 
         if (
@@ -69,6 +90,15 @@ class DepthFirstSearchGenerator(MazeGenerator):
         ]
 
     def _carve_around(self, cell: Cell) -> None:
+        """Synchronise neighbour walls to match the given cell's openings.
+
+        For every direction, if the wall on *cell* is open the matching
+        wall on the adjacent neighbour is also cleared; if it is closed
+        the neighbour wall is restored.  Locked neighbours are skipped.
+
+        Args:
+            cell: The cell whose wall state should be propagated.
+        """
         directions = [
             EDirection.NORTH,
             EDirection.EAST,
@@ -217,6 +247,12 @@ class DepthFirstSearchGenerator(MazeGenerator):
         return False
 
     def _make_imperfect(self) -> None:
+        """Break roughly 20% of internal walls to add loops to the maze.
+
+        Walls are removed in order of cells with the most remaining
+        walls first.  A wall is only broken if doing so would not
+        create a fully open 3x3 block.
+        """
         directions = [
             EDirection.NORTH,
             EDirection.EAST,
@@ -234,6 +270,14 @@ class DepthFirstSearchGenerator(MazeGenerator):
         maze = self.get_maze()
 
         def count_walls(cell: Cell) -> int:
+            """Count the number of walls present on a cell.
+
+            Args:
+                cell: The cell to inspect.
+
+            Returns:
+                Number of active walls (0 to 4).
+            """
             c = 0
             for dir in directions:
                 if cell.walls & dir.value:
@@ -301,6 +345,21 @@ class DepthFirstSearchGenerator(MazeGenerator):
                 available_cells.add(cell)
 
     def generate(self, seed: Optional[str] = None) -> List[Cell]:
+        """Generate a maze using randomised iterative depth-first search.
+
+        Starting from a random unlocked cell, the algorithm carves
+        passages by repeatedly choosing a random unvisited neighbour
+        and pushing it onto the stack.  When no unvisited neighbour
+        exists the algorithm backtracks.  If the maze is configured
+        as imperfect, extra walls are broken afterwards.
+
+        Args:
+            seed: Optional seed to re-initialise the RNG before
+                generation.
+
+        Returns:
+            The list of cells in the order they were visited.
+        """
 
         if seed is not None:
             self._get_rng().seed(seed)
@@ -358,7 +417,7 @@ class DepthFirstSearchGenerator(MazeGenerator):
                             curr_cell.position.x + 1
                         ]
                     )
-                if direction == EDirection.SOUTH:
+                elif direction == EDirection.SOUTH:
                     stack.append(
                         self.get_maze().map[curr_cell.position.y + 1][
                             curr_cell.position.x
@@ -369,7 +428,7 @@ class DepthFirstSearchGenerator(MazeGenerator):
                             curr_cell.position.x
                         ]
                     )
-                if direction == EDirection.WEST:
+                elif direction == EDirection.WEST:
                     stack.append(
                         self.get_maze().map[curr_cell.position.y][
                             curr_cell.position.x - 1

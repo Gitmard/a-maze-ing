@@ -116,7 +116,7 @@ class MazeGenerator(ABC):
         output = ""
         for line in self.get_maze().map:
             for cell in line:
-                if cell.walls > len(digits):
+                if cell.walls >= len(digits):
                     raise GeneratorException(
                         f"Invalid walls value {cell.walls}"
                     )
@@ -124,9 +124,10 @@ class MazeGenerator(ABC):
                 output += digit
             output += "\n"
         output += "\n"
-        output += f"{self.__start_pos.x, self.__start_pos.y}\n"
-        output += f"{self.__end_pos.x, self.__end_pos.y}\n"
-        solution_coords = [(0, 0)] + self.get_solution()
+        output += f"{self.__start_pos.x},{self.__start_pos.y}\n"
+        output += f"{self.__end_pos.x},{self.__end_pos.y}\n"
+        solution_coords = [(self.__start_pos.x, self.__start_pos.y)] + \
+            self.get_solution()
         solutions_moves = ""
         for i in range(len(solution_coords) - 1):
             curr_coords = solution_coords[i]
@@ -145,10 +146,8 @@ class MazeGenerator(ABC):
 
     def write_output_file(self) -> None:
         """Format and write the maze to the configured output file."""
-        print(f"Writing maze to {self.__output_file}")
         with open(self.__output_file, "w") as out:
             out.write(self.__format_output())
-        print("Finished writing output file")
 
     def get_solution(self) -> List[Coord]:
         """Return the solution path as a list of (x, y) coordinates."""

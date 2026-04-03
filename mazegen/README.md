@@ -34,7 +34,7 @@ DepthFirstSearchGenerator(
 	width=30,
 	height=20,
 	start_pos=Vec2(0, 0),
-	end_post=Vec2(29, 19),
+	end_pos=Vec2(29, 19),
 	seed="my_seed!!",
 	output_file="output_maze.txt",
 	is_perfect=True,

@@ -68,6 +68,12 @@ class Visualizer:
     """
 
     def __init__(self, generator: MazeGenerator) -> None:
+        """Initialize the visualizer, compute layout and create the MLX window.
+
+        Args:
+            generator: A ``MazeGenerator`` instance whose maze has
+                already been initialised.
+        """
         self.generator = generator
         self.maze: List[List[Cell]] = generator.get_maze().map
         self.maze_width: int = len(self.maze[0])
@@ -364,6 +370,11 @@ class Visualizer:
         """
 
         def on_loop(_: Any) -> None:
+            """Handle one iteration of the MLX event loop.
+
+            Checks state flags and performs the corresponding action
+            (regenerate, toggle path, change colour, or quit).
+            """
             if state[EEvents.REGEN]:
                 self.draw_empty()
                 self.generator.generate()
@@ -400,6 +411,7 @@ class Visualizer:
                 self.m.mlx_loop_exit(self.mlx_ptr)
 
         def on_close(_: Any) -> None:
+            """Handle the window-close event by exiting the MLX loop."""
             self.m.mlx_loop_exit(self.mlx_ptr)
 
         self.m.mlx_loop_hook(self.mlx_ptr, on_loop, None)
@@ -435,6 +447,14 @@ def visualize(generator: MazeGenerator) -> None:
     def on_press(
         key: Union[Key, KeyCode, None],
     ) -> None:
+        """Map key presses to event-state flags.
+
+        Recognised keys: ``c`` (colour change), ``p`` (path toggle),
+        ``r`` (regenerate), ``q`` (quit).
+
+        Args:
+            key: The key event received from the listener.
+        """
         if not isinstance(key, KeyCode):
             return
         if key.char is None:
